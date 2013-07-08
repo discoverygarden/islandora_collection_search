@@ -1,0 +1,244 @@
+<?php
+
+/**
+ * Implements hook_block_info().
+ */
+function islandora_collection_search_block_info() {
+  $blocks['islandora_collection_search'] = array(
+    'info' => t('Islandora Collection Search'),
+  );
+  return $blocks;
+}
+
+/**
+ * Implements hook_block_view().
+ */
+function islandora_collection_search_block_view($delta = '') {
+  $block = array();
+  switch ($delta) {
+    case 'islandora_collection_search':
+      $block['subject'] = t('Islandora Collection Search');
+      $block['content'] = drupal_get_form('islandora_collection_search_form');
+      break;
+  }
+  return $block;
+}
+
+/**
+ * Form for searching within a given collection (or site wide).
+ *
+ * @param array $form
+ *   Associative array with Drupal Form API elements.
+ *
+ * @param array $form_state
+ *   Associative array with form state information.
+ */
+function islandora_collection_search_form($form, &$form_state) {
+  $params = $_GET;
+  $hidden_filter = NULL;
+  $rels_ext = array(
+    'RELS_EXT_isMemberOfCollection_uri_ms',
+    'RELS_EXT_isMemberOf_uri_ms',
+  );
+  // Find rels ext in parameters.
+  if (isset($params['f'])) {
+    foreach ($params['f'] as $filter) {
+      $filter_arr = explode(':', $filter);
+      foreach ($rels_ext as $rels) {
+        if (strpos($filter_arr[0], $rels) === 0) {
+          $hidden_filter = $filter;
+          break;
+        }
+      }
+    }
+  }
+  $options = array(
+    0 => t('All collections'),
+    1 => t('This collection'),
+  );
+  $form['simple'] = array(
+    '#type' => 'container',
+    '#attributes' => array(
+      'class' => array(
+        'container-inline',
+      ),
+    ),
+  );
+  $form['simple']['hidden_filter'] = array(
+    '#type' => 'hidden',
+    '#value' => $hidden_filter,
+  );
+  if (!empty($hidden_filter)) {
+    $form['simple']['collection_select'] = array(
+      '#type' => 'select',
+      '#options' => $options,
+      '#default_value' => (!empty($hidden_filter)) ? 1 : 0,
+    );
+  }
+  $form['simple']["islandora_simple_search_query"] = array(
+    '#size' => '15',
+    '#type' => 'textfield',
+    '#title' => '',
+    // @TODO: should this be the searched value?
+    '#default_value' => '',
+  );
+  $form['simple']['submit'] = array(
+    '#type' => 'submit',
+    '#value' => t('search'),
+  );
+  return $form;
+}
+
+/**
+ * Submit handler for collection search form.
+ *
+ * @param array $form
+ *   Associative array with Drupal Form API elements.
+ *
+ * @param array $form_state
+ *   Associative array with form state information.
+ */
+function islandora_collection_search_form_submit($form, &$form_state) {
+  $form_state['rebuild'] = TRUE;
+  $search_string = $form_state['values']['islandora_simple_search_query'];
+  // Replace the slash so url doesn't break.
+  $search_string = str_replace('/', '~slsh~', $search_string);
+  preg_match('/:"(.*?)"/', $form_state['values']['hidden_filter'], $hidden_match);
+  $hidden_filter = $hidden_match[1];
+  $collection_pid = $hidden_filter;
+  if (isset($form_state['values']['collection_select'])) {
+    $collection_select = $form_state['values']['collection_select'];
+  }
+
+  // Using edismax by default.
+  $query = array('type' => 'edismax');
+  if (!empty($hidden_filter) && isset($collection_select) && $collection_select == 1) {
+    $query['cp'] = $collection_pid;
+  }
+  drupal_goto('islandora/search/' . $search_string, array('query' => $query));
+}
+
+/**
+ * Implements hook_islandora_solr_query().
+ *
+ * Adds a collection as a filter if it is defined in the url params.
+ */
+function islandora_collection_search_islandora_solr_query($islandora_solr_query) {
+  // Exit early if the collection pid isn't set in the url params.
+  if (!isset($_GET['cp'])) {
+    return;
+  }
+
+  // Grab the collection pid and add it as a solr query filter.
+  $collection_pid = $_GET['cp'];
+  $ancestor_field = variable_get('islandora_collection_search_ancestor_field', 'ancestors_ms');
+  $filter = format_string('!field:"!value"', array(
+    '!field' => $ancestor_field,
+    '!value' => $collection_pid,
+  ));
+  $islandora_solr_query->solrParams['fq'][] = $filter;
+}
+
+/**
+ * Implements hook_form_alter().
+ *
+ * Adds a submit handler to any form that can potentially alter the object
+ * hierarchy (e.g. changing parents, etc...).
+ */
+function islandora_collection_search_form_alter(&$form, $form_state, $form_id) {
+  switch ($form_id) {
+    case 'islandora_basic_collection_migrate_children_form':
+      $form['#submit'][] = 'islandora_collection_search_migrate_children_form_submit';
+      break;
+  }
+}
+
+/**
+ * Re-indexes all children of the object(s) manipulated by a form.
+ *
+ * @param array $form
+ *   Array of drupal form api elements.
+ *
+ * @param array $form_state
+ *   Array representing the form state.
+ *
+ * @param string $form_id
+ *   The name of the form.
+ */
+function islandora_collection_search_migrate_children_form_submit($form, &$form_state, $form_id) {
+  // Grab the initial list of children that are being migrated from the form.
+  $children = array_keys(array_filter($form_state['values']['children']));
+
+  // Recursively construct the pid list of children to re-index in solr.
+  $to_reindex = array();
+  foreach ($children as $child) {
+    islandora_collection_search_get_descendants($child, $to_reindex);
+  }
+  $to_reindex = array_unique($to_reindex);
+
+  // Construct the url to ping gsearch to perform the re-index.
+  $base_url = variable_get("islandora_collection_search_gsearch_endpoint", "http://localhost:8080/fedoragsearch/rest");
+  $base_url .= "?operation=updateIndex&action=fromPid&value=";
+
+  //
+  // RESUME WORK HERE
+  //
+  // Need to fiddle with the default value for the variable_get so it's
+  // reasonable.  Also need to set up an admin page so the user can edit
+  // the 'islandora_collection_search_gsearch_endpoint' variable.
+  //
+  // Right now the gsearch endpoing isn't working for me locally, but i'm sure
+  // it's a pretty simple DERP to fix.  It would be really nice if we could
+  // simply put the message on the queue programatically, but i'm not sure
+  // how we'd do that in PHPland.
+
+  // Poke gsearch with each pid.
+  foreach ($to_reindex as $pid) {
+    $route = $base_url . $pid;
+    dd($route);
+    drupal_http_request($route);
+  }
+}
+
+/**
+ * Recursively constructs a list of descendants for the given pid.
+ *
+ * @param string $pid
+ *   The pid whose descendants we wish to obtain.
+ *
+ * @param array $out_array
+ *   An array passed by reference throughout the whole recursive walk.  It
+ *   is filled with the descendants from each recursive call of the function.
+ */
+function islandora_collection_search_get_descendants($pid, &$out_array) {
+  // SPARQL query to get all children for a given pid.
+  $query = "PREFIX fre: <info:fedora/fedora-system:def/relations-external#>
+            PREFIX fm: <info:fedora/fedora-system:def/model#>
+            SELECT ?obj
+            FROM <#ri>
+            WHERE {
+              {
+                ?obj fre:isMemberOfCollection ?sub
+              }
+              UNION
+              {
+                ?obj fre:isMemberOf ?sub
+              }
+              ?obj fm:state fm:Active .
+              ?sub fm:state fm:Active
+              FILTER(sameTerm(?sub, <info:fedora/$pid>))
+            }";
+
+  // Use tuque to get a connection to Fedora and execute the SPARQL query.
+  $tuque = islandora_get_tuque_connection();
+  $repo = $tuque->repository;
+  $results = $repo->ri->sparqlQuery($query);
+
+  if (!empty($results)) {
+    foreach ($results as $result) {
+      $pid = $result['obj']['value'];
+      $out_array[] = $pid;
+      islandora_collection_search_get_descendants($pid, $out_array);
+    }
+  }
+}
