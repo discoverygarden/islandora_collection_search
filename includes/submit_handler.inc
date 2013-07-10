@@ -25,7 +25,6 @@ function islandora_collection_search_migrate_children_form_submit($form, &$form_
   foreach ($children as $child) {
     islandora_collection_search_get_descendants($child, $to_reindex);
   }
-  $to_reindex = array_unique($to_reindex);
 
   // Construct the url to ping gsearch to perform the re-index.
   $gsearch_endpoint = variable_get("islandora_collection_search_gsearch_endpoint", "http://localhost:8080/fedoragsearch/rest");
@@ -90,8 +89,10 @@ function islandora_collection_search_get_descendants($pid, &$out_array) {
   if (!empty($results)) {
     foreach ($results as $result) {
       $pid = $result['obj']['value'];
-      $out_array[] = $pid;
-      islandora_collection_search_get_descendants($pid, $out_array);
+      if (!in_array($pid, $out_array)) {
+        $out_array[] = $pid;
+        islandora_collection_search_get_descendants($pid, $out_array);
+      }
     }
   }
 }
