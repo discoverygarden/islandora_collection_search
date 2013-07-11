@@ -75,7 +75,7 @@ function islandora_collection_search_menu() {
   $items['admin/islandora/collection_search'] = array(
     'title' => 'Collection Search',
     'page callback' => 'drupal_get_form',
-    'page arguments' => array('islandora_collection_search'),
+    'page arguments' => array('islandora_collection_search_admin_form'),
     'access arguments' => array('administer site configuration'),
     'file' => 'includes/admin.form.inc',
   );
