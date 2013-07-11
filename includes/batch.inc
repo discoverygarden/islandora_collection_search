@@ -157,11 +157,13 @@ function islandora_collection_search_reindex_object($pids) {
     'Authorization' => 'Basic: ' . base64_encode(rawurlencode($gsearch_user) . ':' . rawurlencode($gsearch_password)),
   );
 
-  foreach ((array)$pids as $pid) {
+  foreach ((array) $pids as $pid) {
     // Poke gsearch with each pid.
-    $url = url($gsearch_endpoint, array('query' => $base_params + array(
-      'value' => $pid,
-    )));
+    $url = url($gsearch_endpoint, array(
+      'query' => $base_params + array(
+        'value' => $pid,
+      ),
+    ));
 
     drupal_http_request($url, array('headers' => $headers));
   }

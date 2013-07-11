@@ -2,7 +2,7 @@
 
 /**
  * @file
- * 
+ * Form submit handler and the like.
  */
 
 /**
@@ -118,4 +118,3 @@ function islandora_collection_search_get_collection_pid() {
 
   return FALSE;
 }
-
