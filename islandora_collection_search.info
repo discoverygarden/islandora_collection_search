@@ -1,0 +1,8 @@
+name = Islandora Collection Search
+description = Module for searching within a specific collection in Islandora
+package = Islandora
+version = 7.x-dev
+core = 7.x
+dependencies[] = islandora
+dependencies[] = islandora_solr
+dependencies[] = islandora_basic_collection
