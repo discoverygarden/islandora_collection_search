@@ -1,0 +1,95 @@
+<?php
+
+/**
+ * @file
+ * Miscellaneous hook implementations.
+ */
+
+/**
+ * Implements hook_block_info().
+ */
+function islandora_collection_search_block_info() {
+  $blocks['islandora_collection_search'] = array(
+    'info' => t('Islandora Collection Search'),
+  );
+  return $blocks;
+}
+
+/**
+ * Implements hook_block_view().
+ */
+function islandora_collection_search_block_view($delta = '') {
+  $block = array();
+  switch ($delta) {
+    case 'islandora_collection_search':
+      module_load_include('inc', 'islandora_collection_search', 'includes/search.form');
+      $block['subject'] = t('Islandora Collection Search');
+      $block['content'] = drupal_get_form('islandora_collection_search_form');
+      break;
+  }
+  return $block;
+}
+
+/**
+ * Implements hook_islandora_solr_query().
+ *
+ * Adds a collection as a filter if it is defined in the url params.
+ */
+function islandora_collection_search_islandora_solr_query($islandora_solr_query) {
+  // Exit early if the collection pid isn't set in the url params.
+  if (!isset($_GET['cp'])) {
+    return;
+  }
+
+  // Grab the collection pid and add it as a solr query filter.
+  $collection_pid = $_GET['cp'];
+  $ancestor_field = variable_get('islandora_collection_search_ancestor_field', 'ancestors_ms');
+  $filter = format_string('!field:"!value"', array(
+    '!field' => $ancestor_field,
+    '!value' => $collection_pid,
+  ));
+  $islandora_solr_query->solrParams['fq'][] = $filter;
+}
+
+/**
+ * Implements hook_form_FORM_ID_alter().
+ *
+ * Adds a submit handler to any form that can potentially alter the object
+ * hierarchy (e.g. changing parents, etc...).
+ */
+function islandora_collection_search_form_islandora_basic_collection_migrate_children_form_alter(&$form, &$form_state) {
+  $form['#submit'][] = 'islandora_collection_search_migrate_children_form_submit';
+}
+
+/**
+ * Implements hook_menu().
+ */
+function islandora_collection_search_menu() {
+  $items = array();
+
+  $items['admin/islandora/collection_search'] = array(
+    'title' => 'Collection Search',
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('islandora_collection_search_admin_form'),
+    'access arguments' => array('administer site configuration'),
+    'file' => 'includes/admin.form.inc',
+  );
+
+  return $items;
+}
+
+/**
+ * Re-indexes all children of the object(s) manipulated by a form.
+ *
+ * @param array $form
+ *   Array of drupal form api elements.
+ * @param array $form_state
+ *   Array representing the form state.
+ */
+function islandora_collection_search_migrate_children_form_submit(&$form, &$form_state) {
+  // Grab the initial list of children that are being migrated from the form.
+  $children = array_keys(array_filter($form_state['values']['children']));
+
+  module_load_include('inc', 'islandora_collection_search', 'includes/batch');
+  batch_set(islandora_collection_search_reindex_descendants_batch($children));
+}
