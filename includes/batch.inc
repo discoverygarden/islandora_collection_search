@@ -97,7 +97,7 @@ function islandora_collection_search_get_descendants_batch_operation($moving, &$
 
   islandora_collection_search_get_descendants($pid, $context['results']['to_reindex']);
 
-  $sandbox['finished'] = $sandbox['offset'] / $sandbox['total'];
+  $context['finished'] = $sandbox['offset'] / $sandbox['total'];
   $context['message'] = t('Discovered descendants of @pid.', array(
     '@pid' => $pid,
   ));
@@ -130,7 +130,7 @@ function islandora_collection_search_reindex_descendants_batch_operation(&$conte
 
   islandora_collection_search_reindex_object($pid);
 
-  $sandbox['finished'] = $sandbox['offset'] / $sandbox['total'];
+  $context['finished'] = $sandbox['offset'] / $sandbox['total'];
   $context['message'] = t('Reindexed @pid.', array(
     '@pid' => $pid,
   ));
