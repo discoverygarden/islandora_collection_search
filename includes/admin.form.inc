@@ -41,10 +41,50 @@ function islandora_collection_search_admin_form($form, &$form_state) {
       '#default_value' => FALSE,
     ),
   );
-
+  $form['collections'] = array(
+    '#title' => t('Collections'),
+    '#type' => 'fieldset',
+    '#description' => t('Collections selected will appear as selectable options within the search dropdown. Note that the current collection and the ability to search all collections will always be available regardless of configuration.'),
+    '#collapsed' => FALSE,
+    '#collapsible' => TRUE,
+  );
+  $all_collections = islandora_basic_collection_get_collections();
+  $header = array(
+    'label' => array('data' => t('Label')),
+    'pid' => array('data' => t('PID')),
+  );
+  $options = array();
+  foreach ($all_collections as $collection_info) {
+    $options[$collection_info['pid']] = array(
+      'label' => array(
+        'data' => $collection_info['label'],
+      ),
+      'pid' => array(
+        'data' => $collection_info['pid'],
+      ),
+    );
+  }
+  $form['collections']['collection_selection'] = array(
+    '#type' => 'tableselect',
+    '#header' => $header,
+    '#options' => $options,
+    '#empty' => t('No collections available.'),
+    '#default_value' => variable_get('islandora_collection_search_searchable_collections', array()),
+  );
   $form['submit'] = array(
     '#type' => 'submit',
-    '#value' => t('Submit'),
+    '#value' => t('Configure'),
+  );
+  $form['collections']['collection_label'] = array(
+    '#type' => 'checkbox',
+    '#title' => t('Display collection label?'),
+    '#description' => t("When selected this will display the current collection's label for display as opposed to this collection"),
+    '#default_value' => variable_get('islandora_collection_search_display_label', FALSE),
+  );
+  $form['collections']['advanced_search_alter'] = array(
+    '#type' => 'checkbox',
+    '#title' => t('Display a searchable collection field in advanced search?'),
+    '#default_value' => variable_get('islandora_collection_search_advanced_search_alter', FALSE),
   );
   return $form;
 }
@@ -55,8 +95,10 @@ function islandora_collection_search_admin_form($form, &$form_state) {
 function islandora_collection_search_admin_form_submit(&$form, &$form_state) {
   variable_set('islandora_collection_search_gsearch_endpoint', $form_state['values']['islandora_collection_search_gsearch_endpoint']);
   variable_set('islandora_collection_search_gsearch_user', $form_state['values']['islandora_collection_search_gsearch_user']);
-
+  variable_set('islandora_collection_search_display_label', $form_state['values']['collection_label']);
   if ($form_state['values']['islandora_collection_search_gsearch_password'] || $form_state['values']['blank_password']) {
     variable_set('islandora_collection_search_gsearch_password', $form_state['values']['islandora_collection_search_gsearch_password']);
   }
+  variable_set('islandora_collection_search_searchable_collections', $form_state['values']['collection_selection']);
+  variable_set('islandora_collection_search_advanced_search_alter', $form_state['values']['advanced_search_alter']);
 }

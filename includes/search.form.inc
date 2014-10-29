@@ -15,6 +15,7 @@
  *   Associative array with form state information.
  */
 function islandora_collection_search_form($form, &$form_state) {
+  module_load_include('inc', 'islandora_collection_search', 'includes/utilities');
   form_load_include($form_state, 'inc', 'islandora_collection_search', 'includes/search.form');
 
   $form['simple'] = array(
@@ -27,18 +28,25 @@ function islandora_collection_search_form($form, &$form_state) {
   );
 
   $collection = islandora_collection_search_get_collection_pid();
+  $label = FALSE;
+  if (variable_get('islandora_collection_search_display_label', FALSE) && $collection) {
+    $collection_object = islandora_object_load($collection);
+    $label = $collection_object->label;
+  }
   $form['simple']['collection_pid'] = array(
     '#type' => 'hidden',
     '#value' => $collection,
   );
+  $options = array(
+    'all' => t('All collections'),
+    'current' => $label ? $label : t('This collection'),
+  );
+  $options = islandora_collection_search_retrieve_searchable_collections($options, $collection);
   $form['simple']['collection_select'] = array(
     '#access' => $collection !== FALSE,
     '#type' => 'select',
-    '#options' => array(
-      0 => t('All collections'),
-      1 => t('This collection'),
-    ),
-    '#default_value' => ($collection ? 1 : 0),
+    '#options' => $options,
+    '#default_value' => $collection ? 'current' : 'all',
   );
   $form['simple']["islandora_simple_search_query"] = array(
     '#size' => '15',
@@ -86,6 +94,9 @@ function islandora_collection_search_form_submit($form, &$form_state) {
 
 /**
  * Break out acquisition of the collection pid.
+ *
+ * @return bool|string
+ *   FALSE if it's not a collection, the PID otherwise.
  */
 function islandora_collection_search_get_collection_pid() {
   $params = $_GET;
