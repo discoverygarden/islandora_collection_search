@@ -67,7 +67,7 @@ function islandora_collection_search_form_islandora_basic_collection_migrate_chi
 function islandora_collection_search_menu() {
   $items = array();
 
-  $items['admin/islandora/collection_search'] = array(
+  $items['admin/islandora/tools/collection_search'] = array(
     'title' => 'Collection Search',
     'page callback' => 'drupal_get_form',
     'page arguments' => array('islandora_collection_search_admin_form'),
@@ -92,4 +92,36 @@ function islandora_collection_search_migrate_children_form_submit(&$form, &$form
 
   module_load_include('inc', 'islandora_collection_search', 'includes/batch');
   batch_set(islandora_collection_search_reindex_descendants_batch($children));
+}
+
+/**
+ * Implements hook_form_FORMID_alter().
+ */
+function islandora_collection_search_form_islandora_solr_advanced_search_form_alter(&$form, &$form_state) {
+  module_load_include('inc', 'islandora_collection_search', 'includes/utilities');
+  $default_options = array(
+    'all' => t('All collections'),
+  );
+  $collections = islandora_collection_search_retrieve_searchable_collections($default_options, FALSE);
+  $form['collections'] = array(
+    '#type' => 'select',
+    '#options' => $collections,
+    '#weight' => 5,
+  );
+  $form['controls']['#weight'] = 6;
+  $form['#submit'][] = 'islandora_collection_search_append_collection_pid';
+}
+
+/**
+ * Submit handler which appends the collection PID to the query.
+ *
+ * @param array $form
+ *   An array representing a form within Drupal.
+ * @param array $form_state
+ *   An array representing the Drupal form state.
+ */
+function islandora_collection_search_append_collection_pid($form, &$form_state) {
+  if ($form_state['values']['collections'] != 'all') {
+    $form_state['redirect'][1]['query']['cp'] = $form_state['values']['collections'];
+  }
 }
