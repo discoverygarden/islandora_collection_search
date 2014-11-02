@@ -1,0 +1,20 @@
+<?php
+/**
+ * @file
+ * Install hooks for this module.
+ */
+
+/**
+ * Implements hook_uninstall().
+ */
+function islandora_collection_search_uninstall() {
+  $variables = array(
+    'islandora_collection_search_gsearch_endpoint',
+    'islandora_collection_search_gsearch_user',
+    'islandora_collection_search_display_label',
+    'islandora_collection_search_gsearch_password',
+    'islandora_collection_search_searchable_collections',
+    'islandora_collection_search_advanced_search_alter',
+  );
+  array_walk($variables, 'variable_del');
+}
