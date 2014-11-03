@@ -98,18 +98,20 @@ function islandora_collection_search_migrate_children_form_submit(&$form, &$form
  * Implements hook_form_FORMID_alter().
  */
 function islandora_collection_search_form_islandora_solr_advanced_search_form_alter(&$form, &$form_state) {
-  module_load_include('inc', 'islandora_collection_search', 'includes/utilities');
-  $default_options = array(
-    'all' => t('All collections'),
-  );
-  $collections = islandora_collection_search_retrieve_searchable_collections($default_options, FALSE);
-  $form['collections'] = array(
-    '#type' => 'select',
-    '#options' => $collections,
-    '#weight' => 5,
-  );
-  $form['controls']['#weight'] = 6;
-  $form['#submit'][] = 'islandora_collection_search_append_collection_pid';
+  if (variable_get('islandora_collection_search_advanced_search_alter', FALSE)) {
+    module_load_include('inc', 'islandora_collection_search', 'includes/utilities');
+    $default_options = array(
+      'all' => t('All collections'),
+    );
+    $collections = islandora_collection_search_retrieve_searchable_collections($default_options, FALSE);
+    $form['collections'] = array(
+      '#type' => 'select',
+      '#options' => $collections,
+      '#weight' => 5,
+    );
+    $form['controls']['#weight'] = 6;
+    $form['#submit'][] = 'islandora_collection_search_append_collection_pid';
+  }
 }
 
 /**

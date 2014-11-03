@@ -31,7 +31,14 @@ function islandora_collection_search_form($form, &$form_state) {
   $label = FALSE;
   if (variable_get('islandora_collection_search_display_label', FALSE) && $collection) {
     $collection_object = islandora_object_load($collection);
-    $label = $collection_object->label;
+    // Let's make sure the object we are on is a collection, if not default
+    // to 'This Collection'.
+    if (in_array('islandora:collectionCModel', $collection_object->models)) {
+      $label = $collection_object->label;
+    }
+    else {
+      $label = t('This collection');
+    }
   }
   $form['simple']['collection_pid'] = array(
     '#type' => 'hidden',
@@ -86,8 +93,16 @@ function islandora_collection_search_form_submit($form, &$form_state) {
 
   // Using edismax by default.
   $query = array('type' => 'edismax');
-  if (!empty($collection_pid) && isset($collection_select) && $collection_select == 1) {
-    $query['cp'] = $collection_pid;
+  if (!empty($collection_pid) && isset($collection_select) && $collection_select !== 'all') {
+    // To handle the case of configurable collections we'll use the collection
+    // pid for the "This collection" selection. Otherwise, default to the value
+    // selected.
+    if ($collection_select === 'current') {
+      $query['cp'] = $collection_pid;
+    }
+    else {
+      $query['cp'] = $collection_select;
+    }
   }
   drupal_goto('islandora/search/' . $search_string, array('query' => $query));
 }
