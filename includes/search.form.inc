@@ -37,7 +37,11 @@ function islandora_collection_search_form($form, &$form_state) {
     // searching otherwise get its parent.
     $qp = new IslandoraSolrQueryProcessor();
     $qp->buildQuery('*:*');
-    $qp->solrParams['fq'][] = format_string('RELS_EXT_isMemberOfCollection_uri_ms:"info:fedora/!pid" OR RELS_EXT_isMemberOf_uri_ms:"info:fedora/!pid"', array('!pid' => $collection));
+    $qp->solrParams['fq'][] = format_string('!is_memberofcollection:"info:fedora/!pid" OR !is_member:"info:fedora/!pid"', array(
+      '!is_memberofcollection' => variable_get('islandora_solr_member_of_collection_field', 'RELS_EXT_isMemberOfCollection_uri_ms'),
+      '!is_memberof' => variable_get('islandora_solr_member_of_field', 'RELS_EXT_isMemberOf_uri_ms'),
+      '!pid' => $collection,
+     ));
     $qp->executeQuery(FALSE);
     // If no children need to find the immediate parent to search for instead.
     if (!$qp->islandoraSolrResult['response']['numFound']) {
@@ -127,8 +131,8 @@ function islandora_collection_search_get_collection_pid() {
   $params = $_GET;
   $hidden_filter = NULL;
   $rels_ext = array(
-    'RELS_EXT_isMemberOfCollection_uri_ms',
-    'RELS_EXT_isMemberOf_uri_ms',
+    variable_get('islandora_solr_member_of_collection_field', 'RELS_EXT_isMemberOfCollection_uri_ms'),
+    variable_get('islandora_solr_member_of_field', 'RELS_EXT_isMemberOf_uri_ms'),
   );
   // Find rels ext in parameters.
   if (isset($params['f'])) {
