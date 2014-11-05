@@ -9,8 +9,9 @@
  *
  * @param array $options
  *   The default set of options to be appended to.
- * @param bool $collection
- *   Whether or not we are currently on a collection when searching.
+ * @param bool|string $collection
+ *   Bool denoting whether we are on a collection when searching, the PID
+ *   otherwise.
  *
  * @return array
  *   An associative array where the key is the pid of the collection object

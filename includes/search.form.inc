@@ -28,32 +28,57 @@ function islandora_collection_search_form($form, &$form_state) {
   );
 
   $collection = islandora_collection_search_get_collection_pid();
-  $label = FALSE;
-  if (variable_get('islandora_collection_search_display_label', FALSE) && $collection) {
-    $collection_object = islandora_object_load($collection);
-    // Let's make sure the object we are on is a collection, if not default
-    // to 'This Collection'.
-    if (in_array('islandora:collectionCModel', $collection_object->models)) {
-      $label = $collection_object->label;
-    }
-    else {
-      $label = t('This collection');
-    }
-  }
-  $form['simple']['collection_pid'] = array(
-    '#type' => 'hidden',
-    '#value' => $collection,
-  );
   $options = array(
     'all' => t('All collections'),
-    'current' => $label ? $label : t('This collection'),
   );
+  $default_search = 'all';
+  if ($collection) {
+    // See if the current object has children, and if so make it available for
+    // searching otherwise get its parent.
+    $qp = new IslandoraSolrQueryProcessor();
+    $qp->buildQuery('*:*');
+    $qp->solrParams['fq'][] = format_string('!is_memberofcollection:"info:fedora/!pid" OR !is_member:"info:fedora/!pid"', array(
+      '!is_memberofcollection' => variable_get('islandora_solr_member_of_collection_field', 'RELS_EXT_isMemberOfCollection_uri_ms'),
+      '!is_memberof' => variable_get('islandora_solr_member_of_field', 'RELS_EXT_isMemberOf_uri_ms'),
+      '!pid' => $collection,
+     ));
+    $qp->executeQuery(FALSE);
+    // If no children need to find the immediate parent to search for instead.
+    if (!$qp->islandoraSolrResult['response']['numFound']) {
+      module_load_include('inc', 'islandora_basic_collection', 'includes/utilities');
+      $child_object = islandora_object_load($collection);
+      $parents = islandora_basic_collection_get_parent_pids($child_object);
+      $collections = drupal_map_assoc($parents);
+    }
+    $show_label = variable_get('islandora_collection_search_display_label', FALSE);
+    if (!empty($collections)) {
+      // If there are more than one possible parents we can't differentiate for
+      // the "This collection" case, resort to using the labels.
+      if (count($collections) > 1) {
+        foreach ($collections as $pid) {
+          $object = islandora_object_load($pid);
+          $options[$object->id] = $object->label;
+        }
+      }
+      else {
+        $pid = reset($collections);
+        $object = islandora_object_load($pid);
+        $options[$object->id] = $show_label ? $object->label : t('This collection');
+      }
+      $default_search = reset($collections);
+    }
+    else {
+      $collection_object = islandora_object_load($collection);
+      $options[$collection_object->id] = $show_label ? $collection_object->label : t('This collection');
+      $default_search = $collection_object->id;
+    }
+  }
   $options = islandora_collection_search_retrieve_searchable_collections($options, $collection);
   $form['simple']['collection_select'] = array(
     '#access' => $collection !== FALSE,
     '#type' => 'select',
     '#options' => $options,
-    '#default_value' => $collection ? 'current' : 'all',
+    '#default_value' => $default_search,
   );
   $form['simple']["islandora_simple_search_query"] = array(
     '#size' => '15',
@@ -84,25 +109,14 @@ function islandora_collection_search_form_submit($form, &$form_state) {
   // Replace the slash so url doesn't break.
   module_load_include('inc', 'islandora_solr', 'includes/utilities');
   $search_string = islandora_solr_replace_slashes($search_string);
-
-  $collection_pid = $form_state['values']['collection_pid'];
-
   $collection_select = isset($form_state['values']['collection_select']) ?
     $form_state['values']['collection_select'] :
     FALSE;
 
   // Using edismax by default.
   $query = array('type' => 'edismax');
-  if (!empty($collection_pid) && isset($collection_select) && $collection_select !== 'all') {
-    // To handle the case of configurable collections we'll use the collection
-    // pid for the "This collection" selection. Otherwise, default to the value
-    // selected.
-    if ($collection_select === 'current') {
-      $query['cp'] = $collection_pid;
-    }
-    else {
-      $query['cp'] = $collection_select;
-    }
+  if (isset($collection_select) && $collection_select !== 'all') {
+    $query['cp'] = $collection_select;
   }
   drupal_goto('islandora/search/' . $search_string, array('query' => $query));
 }
@@ -117,8 +131,8 @@ function islandora_collection_search_get_collection_pid() {
   $params = $_GET;
   $hidden_filter = NULL;
   $rels_ext = array(
-    'RELS_EXT_isMemberOfCollection_uri_ms',
-    'RELS_EXT_isMemberOf_uri_ms',
+    variable_get('islandora_solr_member_of_collection_field', 'RELS_EXT_isMemberOfCollection_uri_ms'),
+    variable_get('islandora_solr_member_of_field', 'RELS_EXT_isMemberOf_uri_ms'),
   );
   // Find rels ext in parameters.
   if (isset($params['f'])) {
