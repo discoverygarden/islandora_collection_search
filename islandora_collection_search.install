@@ -15,6 +15,7 @@ function islandora_collection_search_uninstall() {
     'islandora_collection_search_gsearch_password',
     'islandora_collection_search_searchable_collections',
     'islandora_collection_search_advanced_search_alter',
+    'islandora_collection_search_all_pages',
   );
   array_walk($variables, 'variable_del');
 }
