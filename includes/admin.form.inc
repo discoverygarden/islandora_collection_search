@@ -75,6 +75,12 @@ function islandora_collection_search_admin_form($form, &$form_state) {
     '#type' => 'submit',
     '#value' => t('Configure'),
   );
+  $form['collections']['all_pages'] = array(
+    '#type' => 'checkbox',
+    '#title' => t('Display collection selection on all pages?'),
+    '#description' => t("When selected this will display the collection selection box on all pages with the previously selected collection options"),
+    '#default_value' => variable_get('islandora_collection_search_all_pages', FALSE),
+  );
   $form['collections']['collection_label'] = array(
     '#type' => 'checkbox',
     '#title' => t('Display collection label?'),
@@ -99,6 +105,7 @@ function islandora_collection_search_admin_form_submit(&$form, &$form_state) {
   if ($form_state['values']['islandora_collection_search_gsearch_password'] || $form_state['values']['blank_password']) {
     variable_set('islandora_collection_search_gsearch_password', $form_state['values']['islandora_collection_search_gsearch_password']);
   }
+  variable_set('islandora_collection_search_all_pages', $form_state['values']['all_pages']);
   variable_set('islandora_collection_search_searchable_collections', $form_state['values']['collection_selection']);
   variable_set('islandora_collection_search_advanced_search_alter', $form_state['values']['advanced_search_alter']);
 }

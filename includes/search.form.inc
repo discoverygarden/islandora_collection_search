@@ -37,11 +37,13 @@ function islandora_collection_search_form($form, &$form_state) {
     // searching otherwise get its parent.
     $qp = new IslandoraSolrQueryProcessor();
     $qp->buildQuery('*:*');
-    $qp->solrParams['fq'][] = format_string('!is_memberofcollection:"info:fedora/!pid" OR !is_member:"info:fedora/!pid"', array(
-      '!is_memberofcollection' => variable_get('islandora_solr_member_of_collection_field', 'RELS_EXT_isMemberOfCollection_uri_ms'),
-      '!is_memberof' => variable_get('islandora_solr_member_of_field', 'RELS_EXT_isMemberOf_uri_ms'),
-      '!pid' => $collection,
-     ));
+    $qp->solrParams['fq'][] = format_string('!is_memberofcollection:"info:fedora/!pid" OR !is_member:"info:fedora/!pid"',
+      array(
+        '!is_memberofcollection' => variable_get('islandora_solr_member_of_collection_field', 'RELS_EXT_isMemberOfCollection_uri_ms'),
+        '!is_memberof' => variable_get('islandora_solr_member_of_field', 'RELS_EXT_isMemberOf_uri_ms'),
+        '!pid' => $collection,
+      )
+    );
     $qp->executeQuery(FALSE);
     // If no children need to find the immediate parent to search for instead.
     if (!$qp->islandoraSolrResult['response']['numFound']) {
@@ -74,6 +76,12 @@ function islandora_collection_search_form($form, &$form_state) {
     }
   }
   $options = islandora_collection_search_retrieve_searchable_collections($options, $collection);
+  $all_pages = variable_get('islandora_collection_search_all_pages', FALSE);
+  if ($all_pages) {
+    if (!$collection) {
+      $collection = $all_pages;
+    }
+  }
   $form['simple']['collection_select'] = array(
     '#access' => $collection !== FALSE,
     '#type' => 'select',
