@@ -32,6 +32,7 @@ function islandora_collection_search_form($form, &$form_state) {
     'all' => t('All collections'),
   );
   $default_search = 'all';
+  dsm($collection);
   if ($collection) {
     // See if the current object has children, and if so make it available for
     // searching otherwise get its parent.
@@ -82,6 +83,14 @@ function islandora_collection_search_form($form, &$form_state) {
       $collection = $all_pages;
     }
   }
+  $default_search_value = '';
+  // Check if we're on a search results page.
+  if (variable_get('islandora_collection_search_retain_search_values', FALSE) && strpos(current_path(), 'islandora/search') === 0) {
+    if (isset($_GET['cp'])) {
+      $default_search = $_GET['cp'];
+    }
+    $default_search_value = preg_replace('/islandora\/search\/?/', '', current_path());
+  }
   $form['simple']['collection_select'] = array(
     '#access' => $collection !== FALSE,
     '#type' => 'select',
@@ -93,8 +102,7 @@ function islandora_collection_search_form($form, &$form_state) {
     '#type' => 'textfield',
     '#title' => t('Search box'),
     '#title_display' => 'invisible',
-    // @TODO: should this be the searched value?
-    '#default_value' => '',
+    '#default_value' => $default_search_value,
   );
   $form['simple']['submit'] = array(
     '#type' => 'submit',
