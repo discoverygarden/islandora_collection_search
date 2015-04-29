@@ -11,6 +11,7 @@
 function islandora_collection_search_block_info() {
   $blocks['islandora_collection_search'] = array(
     'info' => t('Islandora Collection Search'),
+    'cache' => DRUPAL_NO_CACHE,
   );
   return $blocks;
 }
