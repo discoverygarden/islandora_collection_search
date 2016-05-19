@@ -10,7 +10,13 @@
  */
 function islandora_collection_search_admin_form($form, &$form_state) {
   form_load_include($form_state, 'inc', 'islandora_collection_search', 'includes/admin.form');
-
+  $form['ancestor_field'] = array(
+    '#title' => t('Ancestor field'),
+    '#type' => 'textfield',
+    '#required' => TRUE,
+    '#description' => t('The Solr field that contains ancestor data.'),
+    '#default_value' => variable_get('islandora_collection_search_ancestor_field', 'ancestors_ms'),
+  );
   $form['gsearch'] = array(
     '#title' => t('GSearch Config'),
     '#type' => 'fieldset',
@@ -104,6 +110,7 @@ function islandora_collection_search_admin_form($form, &$form_state) {
  * Form submission handler.
  */
 function islandora_collection_search_admin_form_submit(&$form, &$form_state) {
+  variable_set('islandora_collection_search_ancestor_field', $form_state['values']['ancestor_field']);
   variable_set('islandora_collection_search_gsearch_endpoint', $form_state['values']['islandora_collection_search_gsearch_endpoint']);
   variable_set('islandora_collection_search_gsearch_user', $form_state['values']['islandora_collection_search_gsearch_user']);
   variable_set('islandora_collection_search_display_label', $form_state['values']['collection_label']);
