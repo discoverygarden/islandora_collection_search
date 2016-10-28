@@ -162,8 +162,9 @@ function islandora_collection_search_get_collection_pid() {
     }
   }
   $hidden_match = array();
-  if (preg_match('/:"(.*?)"/', $hidden_filter, $hidden_match)) {
-    return $hidden_match[1];
+  if (preg_match('@.*:"(?:info\\\:fedora\\\/)?(.*)"@', $hidden_filter, $hidden_match)) {
+    $pid = str_replace('\\', '', $hidden_match[1]);
+    return $pid;
   }
 
   $test_object = menu_get_object('islandora_object', 2);
