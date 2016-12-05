@@ -50,7 +50,9 @@ function islandora_collection_search_form($form, &$form_state) {
       module_load_include('inc', 'islandora_basic_collection', 'includes/utilities');
       $child_object = islandora_object_load($collection);
       $parents = islandora_basic_collection_get_parent_pids($child_object);
-      $collections = drupal_map_assoc($parents);
+      $collections = array_filter(drupal_map_assoc($parents), function ($parent) {
+        return islandora_object_load($parent);
+      });
     }
     $show_label = variable_get('islandora_collection_search_display_label', FALSE);
     if (!empty($collections)) {
