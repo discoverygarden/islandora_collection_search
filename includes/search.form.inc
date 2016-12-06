@@ -50,24 +50,23 @@ function islandora_collection_search_form($form, &$form_state) {
       module_load_include('inc', 'islandora_basic_collection', 'includes/utilities');
       $child_object = islandora_object_load($collection);
       $parents = islandora_basic_collection_get_parent_pids($child_object);
-      $collections = drupal_map_assoc($parents);
+      $collections = array_filter(drupal_map_assoc($parents, 'islandora_object_load'));
     }
     $show_label = variable_get('islandora_collection_search_display_label', FALSE);
     if (!empty($collections)) {
       // If there are more than one possible parents we can't differentiate for
       // the "This collection" case, resort to using the labels.
       if (count($collections) > 1) {
-        foreach ($collections as $pid) {
-          $object = islandora_object_load($pid);
+        foreach ($collections as $object) {
           $options[$object->id] = $object->label;
         }
       }
       else {
-        $pid = reset($collections);
-        $object = islandora_object_load($pid);
+        $object = reset($collections);
         $options[$object->id] = $show_label ? $object->label : t('This collection');
       }
-      $default_search = reset($collections);
+      $first_object = reset($collections);
+      $default_search = $first_object->id;
     }
     else {
       $collection_object = islandora_object_load($collection);
