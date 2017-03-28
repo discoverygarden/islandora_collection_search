@@ -21,15 +21,15 @@ function islandora_collection_search_block_info() {
  */
 function islandora_collection_search_block_view($delta = '') {
   $block = array();
-  switch ($delta) {
-    case 'islandora_collection_search':
-    if(user_access ==true){
+switch ($delta) {
+  case 'islandora_collection_search':
+    if (user_access == TRUE) {
       module_load_include('inc', 'islandora_collection_search', 'includes/search.form');
       $block['subject'] = t('Islandora Collection Search');
       $block['content'] = drupal_get_form('islandora_collection_search_form');
       break;
-  }
-  return $block;
+    }
+    return $block;
 }
 
 /**
