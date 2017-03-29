@@ -23,9 +23,11 @@ function islandora_collection_search_block_view($delta = '') {
   $block = array();
   switch ($delta) {
     case 'islandora_collection_search':
-      module_load_include('inc', 'islandora_collection_search', 'includes/search.form');
-      $block['subject'] = t('Islandora Collection Search');
-      $block['content'] = drupal_get_form('islandora_collection_search_form');
+      if (user_access('search islandora solr')) {
+        module_load_include('inc', 'islandora_collection_search', 'includes/search.form');
+        $block['subject'] = t('Islandora Collection Search');
+        $block['content'] = drupal_get_form('islandora_collection_search_form');
+      }
       break;
   }
   return $block;
