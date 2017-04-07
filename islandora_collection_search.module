@@ -127,6 +127,6 @@ function islandora_collection_search_form_islandora_solr_advanced_search_form_al
  */
 function islandora_collection_search_append_collection_pid($form, &$form_state) {
   if ($form_state['values']['collections'] != 'all') {
-    $form_state['redirect'][1]['query']['cp'] = $form_state['values']['collections'];
+    $form_state['redirect'][1]['query']['pid'] = $form_state['values']['collections'];
   }
 }

@@ -130,7 +130,7 @@ function islandora_collection_search_form_submit($form, &$form_state) {
   // Using edismax by default.
   $query = array('type' => 'edismax');
   if (isset($collection_select) && $collection_select !== 'all') {
-    $query['cp'] = $collection_select;
+    $query['pid'] = $collection_select;
   }
   drupal_goto('islandora/search/' . $search_string, array('query' => $query));
 }
