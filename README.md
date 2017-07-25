@@ -22,6 +22,24 @@ This module requires the following modules/libraries:
       4. After making these changes, fedora will need to be restarted, and re-indexed.
   3. Set up the 'Islandora Collection Search' block. It can replace the standard 'Islandora simple search' block.
 
+## Configuration
+
+### Configuring the Module
+
+The configuration page for the module can be found at `yoursite.com/admin/islandora/tools/collection_search`.
+The options in the 'Collections' section of that page provide ways to configure the UI, such as having a drop-down menu of certain collections that can be searched from anywhere on your site where the 'Collection Search' block is enabled.
+You shouldn't need to change the 'Ancestor field' or 'GSearch Config'.
+
+### Configuring the Block
+
+The configuration page for the 'Islandora Collection Search' block can be found at `yoursite.com/admin/structure/block/manage/islandora_collection_search/islandora_collection_search/configure`. The main configuration you might want to do is to define which pages display the block for which Roles and/or Users. That can be managed in the 'Visibility settings' section of this block's configuration page.
+
+## Usage
+
+This module provides a block that works like any other solr search block, but it can narrow the search to objects within a given collection. However, it also has the option to search all collections, which would result in functionality identical to the 'Simple Search' block.
+
+If all the [Installation](#installation) and [Configuration](#configuration) steps have been followed accurately, it should be very easy to use your new search block.
+
 ## Troubleshooting/Issues
 
 Having problems or solved a problem? Contact [discoverygarden](http://support.discoverygarden.ca).
