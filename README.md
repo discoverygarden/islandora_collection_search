@@ -12,7 +12,7 @@ This module requires the following modules/libraries:
 ## Installation
 
   1. Install as usual, see [this](https://drupal.org/documentation/install/modules-themes/modules-7) for further information.
-  2. Ensure that your xslt used by gsearch will index the `ancestors_ms` field.  If you are using discoverygarden's [basic-solr-config](https://github.com/discoverygarden/basic-solr-config?source=c), get your System Administrator to make the following changes in your `foxmlToSolr.xslt`:
+  2. Ensure that your xslt used by gsearch will index the `ancestors_ms` field.  If you are using discoverygarden's [basic-solr-config](https://github.com/discoverygarden/basic-solr-config?source=c), make the following changes in your `foxmlToSolr.xslt`:
       1. Find the section that looks like [this](https://github.com/discoverygarden/basic-solr-config/blob/modular/foxmlToSolr.xslt#L27-L30), and make it look like this:<br>
       `xmlns:dgi-e="xalan://ca.discoverygarden.gsearch_extensions"`<br>
       `xmlns:sparql="http://www.w3.org/2001/sw/DataAccess/rf1/result"`<br>
@@ -37,8 +37,6 @@ The configuration page for the 'Islandora Collection Search' block can be found 
 ## Usage
 
 This module provides a block that works like any other solr search block, but it can narrow the search to objects within a given collection. However, it also has the option to search all collections, which would result in functionality identical to the 'Simple Search' block.
-
-If all the [Installation](#installation) and [Configuration](#configuration) steps have been followed accurately, it should be very easy to use your new search block.
 
 ## Troubleshooting/Issues
 
