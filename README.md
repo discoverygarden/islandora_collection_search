@@ -13,10 +13,12 @@ This module requires the following modules/libraries:
 
   1. Install as usual, see [this](https://drupal.org/documentation/install/modules-themes/modules-7) for further information.
   2. Ensure that your xslt used by gsearch will index the `ancestors_ms` field.  If you are using discoverygarden's [basic-solr-config](https://github.com/discoverygarden/basic-solr-config?source=c), make the following changes in your `foxmlToSolr.xslt`:
-      1. Find the section that looks like [this](https://github.com/discoverygarden/basic-solr-config/blob/e161a73abc5bfb0186747174d17a80dcfdc49b4b/foxmlToSolr.xslt#L27-L30), and make it look like this:<br>
-      `xmlns:dgi-e="xalan://ca.discoverygarden.gsearch_extensions"`<br>
-      `xmlns:sparql="http://www.w3.org/2001/sw/DataAccess/rf1/result"`<br>
-      `xmlns:xalan="http://xml.apache.org/xalan">`<br>
+      1. Find the section that looks like [this](https://github.com/discoverygarden/basic-solr-config/blob/e161a73abc5bfb0186747174d17a80dcfdc49b4b/foxmlToSolr.xslt#L27-L30), and make it look like this:
+      ```
+      xmlns:dgi-e="xalan://ca.discoverygarden.gsearch_extensions"
+      xmlns:sparql="http://www.w3.org/2001/sw/DataAccess/rf1/result"
+      xmlns:xalan="http://xml.apache.org/xalan">
+      ```
       2. Find the section that looks like [this](https://github.com/discoverygarden/basic-solr-config/blob/e161a73abc5bfb0186747174d17a80dcfdc49b4b/foxmlToSolr.xslt#L114-L120), and uncomment the code. Leave the comments as comments.
       3. Find the section that looks like [this](https://github.com/discoverygarden/basic-solr-config/blob/e161a73abc5bfb0186747174d17a80dcfdc49b4b/foxmlToSolr.xslt#L277-L287), and uncomment it.
       4. After making these changes, fedora will need to be restarted, and re-indexed.
