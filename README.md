@@ -21,7 +21,7 @@ This module requires the following modules/libraries:
       ```
       2. Find the section that looks like [this](https://github.com/discoverygarden/basic-solr-config/blob/e161a73abc5bfb0186747174d17a80dcfdc49b4b/foxmlToSolr.xslt#L114-L120), and uncomment the code. Leave the comments as comments.
       3. Find the section that looks like [this](https://github.com/discoverygarden/basic-solr-config/blob/e161a73abc5bfb0186747174d17a80dcfdc49b4b/foxmlToSolr.xslt#L277-L287), and uncomment it.
-      4. After making these changes, fedora will need to be restarted, and re-indexed.
+      4. After making these changes, Fedora will need to be restarted, and re-indexed.
   3. Set up the 'Islandora Collection Search' block. It can replace the standard 'Islandora simple search' block.
 
 ## Configuration
