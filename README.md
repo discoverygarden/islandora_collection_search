@@ -39,6 +39,8 @@ The configuration page for the 'Islandora Collection Search' block can be found 
 
 This module provides a block that works like the 'Simple Search' block, but it can narrow the search to objects within a given collection. However, it also has the option to search all collections, which would result in functionality identical to the 'Simple Search' block.
 
+If all the [Installation](#installation) and [Configuration](#configuration) steps have been successfully completed, the powerful and user friendly 'Collection Search' block should now be available.
+
 ## Troubleshooting/Issues
 
 Having problems or solved a problem? Contact [discoverygarden](http://support.discoverygarden.ca).
