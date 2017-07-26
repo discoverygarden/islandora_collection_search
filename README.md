@@ -13,12 +13,12 @@ This module requires the following modules/libraries:
 
   1. Install as usual, see [this](https://drupal.org/documentation/install/modules-themes/modules-7) for further information.
   2. Ensure that your xslt used by gsearch will index the `ancestors_ms` field.  If you are using discoverygarden's [basic-solr-config](https://github.com/discoverygarden/basic-solr-config?source=c), make the following changes in your `foxmlToSolr.xslt`:
-      1. Find the section that looks like [this](https://github.com/discoverygarden/basic-solr-config/blob/modular/foxmlToSolr.xslt#L27-L30), and make it look like this:<br>
+      1. Find the section that looks like [this](https://github.com/discoverygarden/basic-solr-config/blob/e161a73abc5bfb0186747174d17a80dcfdc49b4b/foxmlToSolr.xslt#L27-L30), and make it look like this:<br>
       `xmlns:dgi-e="xalan://ca.discoverygarden.gsearch_extensions"`<br>
       `xmlns:sparql="http://www.w3.org/2001/sw/DataAccess/rf1/result"`<br>
       `xmlns:xalan="http://xml.apache.org/xalan">`<br>
-      2. Find the section that looks like [this](https://github.com/discoverygarden/basic-solr-config/blob/modular/foxmlToSolr.xslt#L114-L120), and uncomment the code. Leave the comments as comments.
-      3. Find the section that looks like [this](https://github.com/discoverygarden/basic-solr-config/blob/modular/foxmlToSolr.xslt#L277-L287), and uncomment it.
+      2. Find the section that looks like [this](https://github.com/discoverygarden/basic-solr-config/blob/e161a73abc5bfb0186747174d17a80dcfdc49b4b/foxmlToSolr.xslt#L114-L120), and uncomment the code. Leave the comments as comments.
+      3. Find the section that looks like [this](https://github.com/discoverygarden/basic-solr-config/blob/e161a73abc5bfb0186747174d17a80dcfdc49b4b/foxmlToSolr.xslt#L277-L287), and uncomment it.
       4. After making these changes, fedora will need to be restarted, and re-indexed.
   3. Set up the 'Islandora Collection Search' block. It can replace the standard 'Islandora simple search' block.
 
@@ -27,8 +27,9 @@ This module requires the following modules/libraries:
 ### Configuring the Module
 
 The configuration page for the module can be found at `yoursite.com/admin/islandora/tools/collection_search`.
-The options in the 'Collections' section of that page provide ways to configure the UI, such as having a drop-down menu of certain collections that can be searched from anywhere on your site where the 'Collection Search' block is enabled.
-You shouldn't need to change the 'Ancestor field' or 'GSearch Config'.
+* The 'Ancestor field' is set to 'ancestors_ms' by default.
+* Configure the 'GSearch Config' section with the propper credentials.
+* The options in the 'Collections' section of that page provide ways to configure the UI, such as having a drop-down menu of certain collections that can be searched from anywhere on your site where the 'Collection Search' block is enabled.
 
 ### Configuring the Block
 
@@ -36,7 +37,7 @@ The configuration page for the 'Islandora Collection Search' block can be found 
 
 ## Usage
 
-This module provides a block that works like any other solr search block, but it can narrow the search to objects within a given collection. However, it also has the option to search all collections, which would result in functionality identical to the 'Simple Search' block.
+This module provides a block that works like the 'Simple Search' block, but it can narrow the search to objects within a given collection. However, it also has the option to search all collections, which would result in functionality identical to the 'Simple Search' block.
 
 ## Troubleshooting/Issues
 
