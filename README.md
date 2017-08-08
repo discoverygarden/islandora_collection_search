@@ -30,7 +30,7 @@ This module requires the following modules/libraries:
 
 The configuration page for the module can be found at `yoursite.com/admin/islandora/tools/collection_search`.
 * The 'Ancestor field' is set to 'ancestors_ms' by default.
-* Configure the 'GSearch Config' section with the propper credentials.
+* Configure the 'GSearch Config' section with the proper credentials.
 * The options in the 'Collections' section of that page provide ways to configure the UI, such as having a drop-down menu of certain collections that can be searched from anywhere on your site where the 'Collection Search' block is enabled.
 
 ### Configuring the Block
