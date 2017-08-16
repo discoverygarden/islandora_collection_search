@@ -55,13 +55,19 @@ function islandora_collection_search_islandora_solr_query($islandora_solr_query)
 }
 
 /**
- * Implements hook_form_FORM_ID_alter().
+ * Implements hook_form_alter().
  *
  * Adds a submit handler to any form that can potentially alter the object
  * hierarchy (e.g. changing parents, etc...).
  */
-function islandora_collection_search_form_islandora_basic_collection_migrate_children_form_alter(&$form, &$form_state) {
-  $form['#submit'][] = 'islandora_collection_search_migrate_children_form_submit';
+function islandora_collection_search_form_alter(&$form, &$form_state, $form_id) {
+  switch ($form_id) {
+    case 'islandora_basic_collection_migrate_children_form':
+    case 'islandora_basic_collection_share_children_form':
+    case 'islandora_basic_collection_delete_children_form':
+      $form['#submit'][] = 'islandora_collection_search_collection_form_submit';
+      break;
+  }
 }
 
 /**
@@ -89,10 +95,9 @@ function islandora_collection_search_menu() {
  * @param array $form_state
  *   Array representing the form state.
  */
-function islandora_collection_search_migrate_children_form_submit(&$form, &$form_state) {
+function islandora_collection_search_collection_form_submit(&$form, &$form_state) {
   // Grab the initial list of children that are being migrated from the form.
   $children = array_keys(array_filter($form_state['values']['children']));
-
   module_load_include('inc', 'islandora_collection_search', 'includes/batch');
   batch_set(islandora_collection_search_reindex_descendants_batch($children));
 }
