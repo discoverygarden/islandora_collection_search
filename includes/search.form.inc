@@ -92,6 +92,8 @@ function islandora_collection_search_form($form, &$form_state) {
   $form['simple']['collection_select'] = array(
     '#access' => $collection !== FALSE,
     '#type' => 'select',
+    '#title' => t('Select Collection'),
+    '#title_display' => 'invisible',
     '#options' => $options,
     '#default_value' => $default_search,
   );
