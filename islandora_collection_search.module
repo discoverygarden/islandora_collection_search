@@ -23,10 +23,10 @@ function islandora_collection_search_block_view($delta = '') {
   $block = array();
   switch ($delta) {
     case 'islandora_collection_search':
-      if (user_access('search islandora solr')) {
+      if (\Drupal::currentUser()->hasPermission('search islandora solr')) {
         module_load_include('inc', 'islandora_collection_search', 'includes/search.form');
         $block['subject'] = t('Islandora Collection Search');
-        $block['content'] = drupal_get_form('islandora_collection_search_form');
+        $block['content'] = \Drupal::formBuilder()->getForm('islandora_collection_search_form');
       }
       break;
   }
@@ -46,7 +46,7 @@ function islandora_collection_search_islandora_solr_query($islandora_solr_query)
 
   // Grab the collection pid and add it as a solr query filter.
   $collection_pid = $_GET['cp'];
-  $ancestor_field = variable_get('islandora_collection_search_ancestor_field', 'ancestors_ms');
+  $ancestor_field = \Drupal::config('islandora_collection_search.settings')->get('islandora_collection_search_ancestor_field');
   $filter = format_string('!field:"!value"', array(
     '!field' => $ancestor_field,
     '!value' => $collection_pid,
@@ -60,7 +60,7 @@ function islandora_collection_search_islandora_solr_query($islandora_solr_query)
  * Adds a submit handler to any form that can potentially alter the object
  * hierarchy (e.g. changing parents, etc...).
  */
-function islandora_collection_search_form_alter(&$form, &$form_state, $form_id) {
+function islandora_collection_search_form_alter(&$form, \Drupal\Core\Form\FormStateInterface &$form_state, $form_id) {
   switch ($form_id) {
     case 'islandora_basic_collection_migrate_children_form':
     case 'islandora_basic_collection_share_children_form':
@@ -106,7 +106,7 @@ function islandora_collection_search_collection_form_submit(&$form, &$form_state
  * Implements hook_form_FORMID_alter().
  */
 function islandora_collection_search_form_islandora_solr_advanced_search_form_alter(&$form, &$form_state) {
-  if (variable_get('islandora_collection_search_advanced_search_alter', FALSE)) {
+  if (\Drupal::config('islandora_collection_search.settings')->get('islandora_collection_search_advanced_search_alter')) {
     module_load_include('inc', 'islandora_collection_search', 'includes/utilities');
     $default_options = array(
       'all' => t('All collections'),

@@ -1,0 +1,3 @@
+islandora_collection_search.admin_form:
+  route_name: islandora_collection_search.admin_form
+  title: 'Collection Search'

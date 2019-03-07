@@ -145,9 +145,9 @@ function islandora_collection_search_reindex_descendants_batch_operation(&$conte
  */
 function islandora_collection_search_reindex_object($pids) {
   // Construct the url to ping gsearch to perform the re-index.
-  $gsearch_endpoint = variable_get("islandora_collection_search_gsearch_endpoint", "http://localhost:8080/fedoragsearch/rest");
-  $gsearch_user = variable_get("islandora_collection_search_gsearch_user", "fedoraAdmin");
-  $gsearch_password = variable_get("islandora_collection_search_gsearch_password", "fedoraAdmin");
+  $gsearch_endpoint = \Drupal::config('islandora_collection_search.settings')->get("islandora_collection_search_gsearch_endpoint");
+  $gsearch_user = \Drupal::config('islandora_collection_search.settings')->get("islandora_collection_search_gsearch_user");
+  $gsearch_password = \Drupal::config('islandora_collection_search.settings')->get("islandora_collection_search_gsearch_password");
 
   $base_params = array(
     'operation' => 'updateIndex',
@@ -159,12 +159,23 @@ function islandora_collection_search_reindex_object($pids) {
 
   foreach ((array) $pids as $pid) {
     // Poke gsearch with each pid.
-    $url = url($gsearch_endpoint, array(
-      'query' => $base_params + array(
-        'value' => $pid,
-      ),
-    ));
+    // @FIXME
+// url() expects a route name or an external URI.
+// $url = url($gsearch_endpoint, array(
+//       'query' => $base_params + array(
+//         'value' => $pid,
+//       ),
+//     ));
 
-    drupal_http_request($url, array('headers' => $headers));
+
+    // @FIXME
+// drupal_http_request() has been replaced by the Guzzle HTTP client, which is bundled
+// with Drupal core.
+// 
+// 
+// @see https://www.drupal.org/node/1862446
+// @see http://docs.guzzlephp.org/en/latest
+// drupal_http_request($url, array('headers' => $headers));
+
   }
 }

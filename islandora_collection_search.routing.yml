@@ -1,0 +1,7 @@
+islandora_collection_search.admin_form:
+  path: /admin/islandora/tools/collection_search
+  defaults:
+    _title: 'Collection Search'
+    _form: \Drupal\islandora_collection_search\Form\IslandoraCollectionSearchAdminForm
+  requirements:
+    _permission: 'administer site configuration'

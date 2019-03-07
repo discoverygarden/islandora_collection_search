@@ -16,7 +16,7 @@
  */
 function islandora_collection_search_form($form, &$form_state) {
   module_load_include('inc', 'islandora_collection_search', 'includes/utilities');
-  form_load_include($form_state, 'inc', 'islandora_collection_search', 'includes/search.form');
+  $form_state->loadInclude('islandora_collection_search', 'inc', 'includes/search.form');
 
   $form['simple'] = array(
     '#type' => 'container',
@@ -37,22 +37,27 @@ function islandora_collection_search_form($form, &$form_state) {
     // searching otherwise get its parent.
     $qp = new IslandoraSolrQueryProcessor();
     $qp->buildQuery('*:*');
-    $qp->solrParams['fq'][] = format_string('!is_memberofcollection:"info:fedora/!pid" OR !is_member:"info:fedora/!pid"',
-      array(
-        '!is_memberofcollection' => variable_get('islandora_solr_member_of_collection_field', 'RELS_EXT_isMemberOfCollection_uri_ms'),
-        '!is_memberof' => variable_get('islandora_solr_member_of_field', 'RELS_EXT_isMemberOf_uri_ms'),
-        '!pid' => $collection,
-      )
-    );
+    // @FIXME
+// // @FIXME
+// // This looks like another module's variable. You'll need to rewrite this call
+// // to ensure that it uses the correct configuration object.
+// $qp->solrParams['fq'][] = format_string('!is_memberofcollection:"info:fedora/!pid" OR !is_member:"info:fedora/!pid"',
+//       array(
+//         '!is_memberofcollection' => variable_get('islandora_solr_member_of_collection_field', 'RELS_EXT_isMemberOfCollection_uri_ms'),
+//         '!is_memberof' => variable_get('islandora_solr_member_of_field', 'RELS_EXT_isMemberOf_uri_ms'),
+//         '!pid' => $collection,
+//       )
+//     );
+
     $qp->executeQuery(FALSE);
     // If no children need to find the immediate parent to search for instead.
     if (!$qp->islandoraSolrResult['response']['numFound']) {
       module_load_include('inc', 'islandora_basic_collection', 'includes/utilities');
       $child_object = islandora_object_load($collection);
       $parents = islandora_basic_collection_get_parent_pids($child_object);
-      $collections = array_filter(drupal_map_assoc($parents, 'islandora_object_load'));
+      $collections = array_filter(array_combine($parents, 'islandora_object_load', $parents));
     }
-    $show_label = variable_get('islandora_collection_search_display_label', FALSE);
+    $show_label = \Drupal::config('islandora_collection_search.settings')->get('islandora_collection_search_display_label');
     if (!empty($collections)) {
       // If there are more than one possible parents we can't differentiate for
       // the "This collection" case, resort to using the labels.
@@ -75,7 +80,7 @@ function islandora_collection_search_form($form, &$form_state) {
     }
   }
   $options = islandora_collection_search_retrieve_searchable_collections($options, $collection);
-  $all_pages = variable_get('islandora_collection_search_all_pages', FALSE);
+  $all_pages = \Drupal::config('islandora_collection_search.settings')->get('islandora_collection_search_all_pages');
   if ($all_pages) {
     if (!$collection) {
       $collection = $all_pages;
@@ -83,7 +88,7 @@ function islandora_collection_search_form($form, &$form_state) {
   }
   $default_search_value = '';
   // Check if we're on a search results page.
-  if (variable_get('islandora_collection_search_retain_search_values', FALSE) && strpos(current_path(), 'islandora/search') === 0) {
+  if (\Drupal::config('islandora_collection_search.settings')->get('islandora_collection_search_retain_search_values') && strpos(\Drupal\Core\Url::fromRoute("<current>")->toString(), 'islandora/search') === 0) {
     if (isset($_GET['cp'])) {
       $default_search = $_GET['cp'];
     }
@@ -146,10 +151,15 @@ function islandora_collection_search_form_submit($form, &$form_state) {
 function islandora_collection_search_get_collection_pid() {
   $params = $_GET;
   $hidden_filter = NULL;
-  $rels_ext = array(
-    variable_get('islandora_solr_member_of_collection_field', 'RELS_EXT_isMemberOfCollection_uri_ms'),
-    variable_get('islandora_solr_member_of_field', 'RELS_EXT_isMemberOf_uri_ms'),
-  );
+  // @FIXME
+// // @FIXME
+// // This looks like another module's variable. You'll need to rewrite this call
+// // to ensure that it uses the correct configuration object.
+// $rels_ext = array(
+//     variable_get('islandora_solr_member_of_collection_field', 'RELS_EXT_isMemberOfCollection_uri_ms'),
+//     variable_get('islandora_solr_member_of_field', 'RELS_EXT_isMemberOf_uri_ms'),
+//   );
+
   // Find rels ext in parameters.
   if (isset($params['f'])) {
     foreach ($params['f'] as $filter) {
@@ -168,7 +178,7 @@ function islandora_collection_search_get_collection_pid() {
     return $pid;
   }
 
-  $test_object = menu_get_object('islandora_object', 2);
+  $test_object = \Drupal::routeMatch()->getParameter('islandora_object', 2);
   if ($test_object) {
     return $test_object->id;
   }
