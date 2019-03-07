@@ -56,17 +56,17 @@ function islandora_collection_search_get_descendants($pid, &$out_array) {
  * A batch description which should reindex the children of $moving.
  */
 function islandora_collection_search_reindex_descendants_batch($moving) {
-  return array(
-    'operations' => array(
-      array('islandora_collection_search_get_descendants_batch_operation', array($moving)),
-      array('islandora_collection_search_reindex_descendants_batch_operation', array()),
-    ),
+  return [
+    'operations' => [
+      ['islandora_collection_search_get_descendants_batch_operation', [$moving]],
+      ['islandora_collection_search_reindex_descendants_batch_operation', []],
+    ],
     'title' => t('Reindexing children...'),
     'init_message' => t('Preparing to reindex children...'),
     'progress_message' => t('Time elapsed: @elapsed <br/>Estimated time remaning @estimate.'),
     'error_message' => t('An error has occurred.'),
     'file' => drupal_get_path('module', 'islandora_collection_search') . '/includes/batch.inc',
-  );
+  ];
 }
 
 /**
@@ -86,7 +86,7 @@ function islandora_collection_search_get_descendants_batch_operation($moving, &$
     // Initialize operation state.
     $sandbox['offset'] = 0;
     $sandbox['total'] = count($moving);
-    $context['results']['to_reindex'] = array();
+    $context['results']['to_reindex'] = [];
     if ($sandbox['total'] === 0) {
       return;
     }
@@ -98,9 +98,9 @@ function islandora_collection_search_get_descendants_batch_operation($moving, &$
   islandora_collection_search_get_descendants($pid, $context['results']['to_reindex']);
 
   $context['finished'] = $sandbox['offset'] / $sandbox['total'];
-  $context['message'] = t('Discovered descendants of @pid.', array(
+  $context['message'] = t('Discovered descendants of @pid.', [
     '@pid' => $pid,
-  ));
+  ]);
 }
 
 /**
@@ -131,9 +131,9 @@ function islandora_collection_search_reindex_descendants_batch_operation(&$conte
   islandora_collection_search_reindex_object($pid);
 
   $context['finished'] = $sandbox['offset'] / $sandbox['total'];
-  $context['message'] = t('Reindexed @pid.', array(
+  $context['message'] = t('Reindexed @pid.', [
     '@pid' => $pid,
-  ));
+  ]);
 }
 
 /**
@@ -149,13 +149,13 @@ function islandora_collection_search_reindex_object($pids) {
   $gsearch_user = \Drupal::config('islandora_collection_search.settings')->get("islandora_collection_search_gsearch_user");
   $gsearch_password = \Drupal::config('islandora_collection_search.settings')->get("islandora_collection_search_gsearch_password");
 
-  $base_params = array(
+  $base_params = [
     'operation' => 'updateIndex',
     'action' => 'fromPid',
-  );
-  $headers = array(
+  ];
+  $headers = [
     'Authorization' => 'Basic: ' . base64_encode(rawurlencode($gsearch_user) . ':' . rawurlencode($gsearch_password)),
-  );
+  ];
 
   foreach ((array) $pids as $pid) {
     // Poke gsearch with each pid.
@@ -171,8 +171,8 @@ function islandora_collection_search_reindex_object($pids) {
     // @FIXME
 // drupal_http_request() has been replaced by the Guzzle HTTP client, which is bundled
 // with Drupal core.
-// 
-// 
+//
+//
 // @see https://www.drupal.org/node/1862446
 // @see http://docs.guzzlephp.org/en/latest
 // drupal_http_request($url, array('headers' => $headers));

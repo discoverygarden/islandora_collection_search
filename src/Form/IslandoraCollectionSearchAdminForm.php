@@ -25,36 +25,36 @@ class IslandoraCollectionSearchAdminForm extends FormBase {
   public function buildForm(array $form, FormStateInterface $form_state) {
     form_load_include($form_state, 'inc', 'islandora_collection_search', 'includes/admin.form');
     $form['ancestor_field'] = [
-      '#title' => t('Ancestor field'),
+      '#title' => $this->t('Ancestor field'),
       '#type' => 'textfield',
       '#required' => TRUE,
-      '#description' => t('The Solr field that contains ancestor data.'),
+      '#description' => $this->t('The Solr field that contains ancestor data.'),
       '#default_value' => \Drupal::config('islandora_collection_search.settings')->get('islandora_collection_search_ancestor_field'),
     ];
     $form['gsearch'] = [
-      '#title' => t('GSearch Config'),
+      '#title' => $this->t('GSearch Config'),
       '#type' => 'fieldset',
-      '#description' => t('Some details about GSearch are required so we can reindex child objects when necessary (e.g. moving a collection from one collection to another).'),
+      '#description' => $this->t('Some details about GSearch are required so we can reindex child objects when necessary (e.g. moving a collection from one collection to another).'),
       'islandora_collection_search_gsearch_endpoint' => [
-        '#title' => t('GSearch Endpoint'),
+        '#title' => $this->t('GSearch Endpoint'),
         '#type' => 'textfield',
         '#required' => TRUE,
         '#default_value' => \Drupal::config('islandora_collection_search.settings')->get("islandora_collection_search_gsearch_endpoint"),
       ],
       'islandora_collection_search_gsearch_user' => [
-        '#title' => t('GSearch User'),
+        '#title' => $this->t('GSearch User'),
         '#type' => 'textfield',
         '#required' => TRUE,
         '#default_value' => \Drupal::config('islandora_collection_search.settings')->get("islandora_collection_search_gsearch_user"),
       ],
       'islandora_collection_search_gsearch_password' => [
-        '#title' => t('GSearch Password'),
+        '#title' => $this->t('GSearch Password'),
         '#type' => 'password',
         '#default_value' => \Drupal::config('islandora_collection_search.settings')->get("islandora_collection_search_gsearch_password"),
       ],
       'blank_password' => [
         '#type' => 'checkbox',
-        '#title' => t('Make password blank? Current password will be preserved if unchecked.'),
+        '#title' => $this->t('Make password blank? Current password will be preserved if unchecked.'),
         '#states' => [
           'visible' => [
             'input[name=islandora_collection_search_gsearch_password]' => [
@@ -66,16 +66,16 @@ class IslandoraCollectionSearchAdminForm extends FormBase {
       ],
     ];
     $form['collections'] = [
-      '#title' => t('Collections'),
+      '#title' => $this->t('Collections'),
       '#type' => 'fieldset',
-      '#description' => t('Collections selected will appear as selectable options within the search dropdown. Note that the current collection and the ability to search all collections will always be available regardless of configuration.'),
+      '#description' => $this->t('Collections selected will appear as selectable options within the search dropdown. Note that the current collection and the ability to search all collections will always be available regardless of configuration.'),
       '#collapsed' => FALSE,
       '#collapsible' => TRUE,
     ];
     $all_collections = islandora_basic_collection_get_collections();
     $header = [
-      'label' => ['data' => t('Label')],
-      'pid' => ['data' => t('PID')],
+      'label' => ['data' => $this->t('Label')],
+      'pid' => ['data' => $this->t('PID')],
     ];
     $options = [];
     foreach ($all_collections as $collection_info) {
@@ -94,33 +94,33 @@ class IslandoraCollectionSearchAdminForm extends FormBase {
       '#type' => 'tableselect',
       '#header' => $header,
       '#options' => $options,
-      '#empty' => t('No collections available.'),
+      '#empty' => $this->t('No collections available.'),
       '#default_value' => \Drupal::config('islandora_collection_search.settings')->get('islandora_collection_search_searchable_collections'),
     ];
     $form['submit'] = [
       '#type' => 'submit',
-      '#value' => t('Configure'),
+      '#value' => $this->t('Configure'),
     ];
     $form['collections']['all_pages'] = [
       '#type' => 'checkbox',
-      '#title' => t('Display collection selection on all pages?'),
-      '#description' => t("When selected this will display the collection selection box on all pages with the previously selected collection options"),
+      '#title' => $this->t('Display collection selection on all pages?'),
+      '#description' => $this->t("When selected this will display the collection selection box on all pages with the previously selected collection options"),
       '#default_value' => \Drupal::config('islandora_collection_search.settings')->get('islandora_collection_search_all_pages'),
     ];
     $form['collections']['collection_label'] = [
       '#type' => 'checkbox',
-      '#title' => t('Display collection label?'),
-      '#description' => t("When selected this will display the current collection's label for display as opposed to this collection"),
+      '#title' => $this->t('Display collection label?'),
+      '#description' => $this->t("When selected this will display the current collection's label for display as opposed to this collection"),
       '#default_value' => \Drupal::config('islandora_collection_search.settings')->get('islandora_collection_search_display_label'),
     ];
     $form['collections']['advanced_search_alter'] = [
       '#type' => 'checkbox',
-      '#title' => t('Display a searchable collection field in advanced search?'),
+      '#title' => $this->t('Display a searchable collection field in advanced search?'),
       '#default_value' => \Drupal::config('islandora_collection_search.settings')->get('islandora_collection_search_advanced_search_alter'),
     ];
     $form['collections']['retain_values_on_search_results'] = [
       '#type' => 'checkbox',
-      '#title' => t('Retain values searched for on result pages?'),
+      '#title' => $this->t('Retain values searched for on result pages?'),
       '#default_value' => \Drupal::config('islandora_collection_search.settings')->get('islandora_collection_search_retain_search_values'),
     ];
     return $form;
