@@ -73,23 +73,6 @@ function islandora_collection_search_form_alter(&$form, FormStateInterface $form
 }
 
 /**
- * Implements hook_menu().
- */
-function islandora_collection_search_menu() {
-  $items = array();
-
-  $items['admin/islandora/tools/collection_search'] = array(
-    'title' => 'Collection Search',
-    'page callback' => 'drupal_get_form',
-    'page arguments' => array('islandora_collection_search_admin_form'),
-    'access arguments' => array('administer site configuration'),
-    'file' => 'includes/admin.form.inc',
-  );
-
-  return $items;
-}
-
-/**
  * Re-indexes all children of the object(s) manipulated by a form.
  *
  * @param array $form
