@@ -14,23 +14,23 @@
  * @param array $form_state
  *   Associative array with form state information.
  */
-function islandora_collection_search_form($form, &$form_state) {
+function islandora_collection_search_form(array $form, &$form_state) {
   module_load_include('inc', 'islandora_collection_search', 'includes/utilities');
   $form_state->loadInclude('islandora_collection_search', 'inc', 'includes/search.form');
 
-  $form['simple'] = array(
+  $form['simple'] = [
     '#type' => 'container',
-    '#attributes' => array(
-      'class' => array(
+    '#attributes' => [
+      'class' => [
         'container-inline',
-      ),
-    ),
-  );
+      ],
+    ],
+  ];
 
   $collection = islandora_collection_search_get_collection_pid();
-  $options = array(
+  $options = [
     'all' => t('All collections'),
-  );
+  ];
   $default_search = 'all';
   if ($collection) {
     // See if the current object has children, and if so make it available for
@@ -94,25 +94,25 @@ function islandora_collection_search_form($form, &$form_state) {
     }
     $default_search_value = arg(2);
   }
-  $form['simple']['collection_select'] = array(
+  $form['simple']['collection_select'] = [
     '#access' => $collection !== FALSE,
     '#type' => 'select',
     '#title' => t('Select Collection'),
     '#title_display' => 'invisible',
     '#options' => $options,
     '#default_value' => $default_search,
-  );
-  $form['simple']["islandora_simple_search_query"] = array(
+  ];
+  $form['simple']["islandora_simple_search_query"] = [
     '#size' => '15',
     '#type' => 'textfield',
     '#title' => t('Search box'),
     '#title_display' => 'invisible',
     '#default_value' => $default_search_value,
-  );
-  $form['simple']['submit'] = array(
+  ];
+  $form['simple']['submit'] = [
     '#type' => 'submit',
     '#value' => t('search'),
-  );
+  ];
   return $form;
 }
 
@@ -124,7 +124,7 @@ function islandora_collection_search_form($form, &$form_state) {
  * @param array $form_state
  *   Associative array with form state information.
  */
-function islandora_collection_search_form_submit($form, &$form_state) {
+function islandora_collection_search_form_submit(array $form, &$form_state) {
   $form_state['rebuild'] = TRUE;
   $search_string = $form_state['values']['islandora_simple_search_query'];
   // Replace the slash so url doesn't break.
@@ -139,7 +139,7 @@ function islandora_collection_search_form_submit($form, &$form_state) {
   if (isset($collection_select) && $collection_select !== 'all') {
     $query['cp'] = $collection_select;
   }
-  drupal_goto('islandora/search/' . $search_string, array('query' => $query));
+  drupal_goto('islandora/search/' . $search_string, ['query' => $query]);
 }
 
 /**
@@ -172,7 +172,7 @@ function islandora_collection_search_get_collection_pid() {
       }
     }
   }
-  $hidden_match = array();
+  $hidden_match = [];
   if (preg_match('@.*:"(?:info\\\:fedora\\\/)?(.*)"@', $hidden_filter, $hidden_match)) {
     $pid = str_replace('\\', '', $hidden_match[1]);
     return $pid;

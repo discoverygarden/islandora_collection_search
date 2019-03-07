@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @file
  * Utility functions for the collection search module.
@@ -17,7 +18,7 @@
  *   An associative array where the key is the pid of the collection object
  *   and the value is the label.
  */
-function islandora_collection_search_retrieve_searchable_collections($options, $collection = FALSE) {
+function islandora_collection_search_retrieve_searchable_collections(array $options, $collection = FALSE) {
   // @FIXME
 // Could not extract the default value because it is either indeterminate, or
 // not scalar. You'll need to provide a default value in

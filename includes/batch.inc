@@ -8,7 +8,6 @@
 /**
  * Recursively constructs a list of descendants for the given pid.
  *
- *
  * @param string $pid
  *   The pid whose descendants we wish to obtain.
  * @param array $out_array
@@ -17,7 +16,7 @@
  *   If this breaks memory constraints, we could make this write to a file...
  *   Might then have to contend with time constraints?
  */
-function islandora_collection_search_get_descendants($pid, &$out_array) {
+function islandora_collection_search_get_descendants($pid, array &$out_array) {
   // SPARQL query to get all children for a given pid.
   $query = "PREFIX fre: <info:fedora/fedora-system:def/relations-external#>
             PREFIX fm: <info:fedora/fedora-system:def/model#>
@@ -79,7 +78,7 @@ function islandora_collection_search_reindex_descendants_batch($moving) {
  *   We will place the objects discovered into
  *   $context['results']['to_reindex'].
  */
-function islandora_collection_search_get_descendants_batch_operation($moving, &$context) {
+function islandora_collection_search_get_descendants_batch_operation(array $moving, array &$context) {
   $sandbox = &$context['sandbox'];
 
   if (!isset($sandbox['offset'])) {

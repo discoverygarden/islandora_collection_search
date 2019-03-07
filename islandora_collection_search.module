@@ -97,7 +97,7 @@ function islandora_collection_search_menu() {
  * @param Drupal\Core\Form\FormStateInterface $form_state
  *   Array representing the form state.
  */
-function islandora_collection_search_collection_form_submit(&$form, FormStateInterface $form_state) {
+function islandora_collection_search_collection_form_submit(array &$form, FormStateInterface $form_state) {
   // Grab the initial list of children that are being migrated from the form.
   $children = array_keys(array_filter($form_state['values']['children']));
   module_load_include('inc', 'islandora_collection_search', 'includes/batch');
@@ -107,7 +107,7 @@ function islandora_collection_search_collection_form_submit(&$form, FormStateInt
 /**
  * Implements hook_form_FORMID_alter().
  */
-function islandora_collection_search_form_islandora_solr_advanced_search_form_alter(&$form, FormStateInterface $form_state) {
+function islandora_collection_search_form_islandora_solr_advanced_search_form_alter(array &$form, FormStateInterface $form_state) {
   if (\Drupal::config('islandora_collection_search.settings')->get('islandora_collection_search_advanced_search_alter')) {
     module_load_include('inc', 'islandora_collection_search', 'includes/utilities');
     $default_options = [
@@ -132,7 +132,7 @@ function islandora_collection_search_form_islandora_solr_advanced_search_form_al
  * @param Drupal\Core\Form\FormStateInterface $form_state
  *   An array representing the Drupal form state.
  */
-function islandora_collection_search_append_collection_pid($form, FormStateInterface $form_state) {
+function islandora_collection_search_append_collection_pid(array $form, FormStateInterface $form_state) {
   if ($form_state['values']['collections'] != 'all') {
     $form_state['redirect'][1]['query']['cp'] = $form_state['values']['collections'];
   }

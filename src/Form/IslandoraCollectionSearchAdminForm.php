@@ -4,10 +4,8 @@ namespace Drupal\islandora_collection_search\Form;
 
 use Drupal\Core\Form\FormBase;
 use Drupal\Core\Form\FormStateInterface;
-use Drupal\Core\Render\Element;
 
 /**
- * @file
  * Admin form and submission handler.
  */
 class IslandoraCollectionSearchAdminForm extends FormBase {
@@ -59,9 +57,9 @@ class IslandoraCollectionSearchAdminForm extends FormBase {
           'visible' => [
             'input[name=islandora_collection_search_gsearch_password]' => [
               'value' => '',
-              ],
             ],
           ],
+        ],
         '#default_value' => FALSE,
       ],
     ];
