@@ -18,3 +18,5 @@ islandora_collection_search.settings:
       type: boolean
     islandora_collection_search_retain_search_values:
       type: boolean
+    islandora_collection_search_searchable_collections:
+      type: sequence

@@ -105,7 +105,7 @@ function islandora_collection_search_get_descendants_batch_operation(array $movi
 /**
  * A batch operation to reindex objects.
  *
- * @param array $context
+ * @param mixed $context
  *   We expect there to be an array of PIDs to reindex in
  *   $context['results']['to_reindex'].
  */
