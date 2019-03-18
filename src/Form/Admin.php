@@ -28,7 +28,6 @@ class Admin extends ConfigFormBase {
    * {@inheritdoc}
    */
   public function buildForm(array $form, FormStateInterface $form_state) {
-    form_load_include($form_state, 'inc', 'islandora_collection_search', 'includes/admin.form');
     $config = $this->config('islandora_collection_search.settings');
     $form['ancestor_field'] = [
       '#title' => $this->t('Ancestor field'),
@@ -144,6 +143,8 @@ class Admin extends ConfigFormBase {
     $config->set('islandora_collection_search_searchable_collections', $form_state->getValue(['collection_selection']));
     $config->set('islandora_collection_search_advanced_search_alter', $form_state->getValue(['advanced_search_alter']));
     $config->set('islandora_collection_search_retain_search_values', $form_state->getValue(['retain_values_on_search_results']));
+
+    $config->save();
   }
 
 }
