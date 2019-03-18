@@ -80,9 +80,9 @@ function islandora_collection_search_form_alter(&$form, FormStateInterface $form
  * @param Drupal\Core\Form\FormStateInterface $form_state
  *   Array representing the form state.
  */
-function islandora_collection_search_collection_form_submit(array &$form, FormStateInterface $form_state) {
+function islandora_collection_search_collection_form_submit(array $form, FormStateInterface $form_state) {
   // Grab the initial list of children that are being migrated from the form.
-  $children = array_keys(array_filter($form_state['values']['children']));
+  $children = array_keys(array_filter($form_state->getValue('children')));
   module_load_include('inc', 'islandora_collection_search', 'includes/batch');
   batch_set(islandora_collection_search_reindex_descendants_batch($children));
 }

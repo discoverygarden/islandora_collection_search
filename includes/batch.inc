@@ -5,6 +5,9 @@
  * Batch operation implementation.
  */
 
+use Drupal\Core\Url;
+use GuzzleHttp\Exception\GuzzleException;
+
 /**
  * Recursively constructs a list of descendants for the given pid.
  *
@@ -156,25 +159,15 @@ function islandora_collection_search_reindex_object($pids) {
     'Authorization' => 'Basic: ' . base64_encode(rawurlencode($gsearch_user) . ':' . rawurlencode($gsearch_password)),
   ];
 
+  $client = \Drupal::httpClient();
   foreach ((array) $pids as $pid) {
     // Poke gsearch with each pid.
-    // @FIXME
-// url() expects a route name or an external URI.
-// $url = url($gsearch_endpoint, array(
-//       'query' => $base_params + array(
-//         'value' => $pid,
-//       ),
-//     ));
-
-
-    // @FIXME
-// drupal_http_request() has been replaced by the Guzzle HTTP client, which is bundled
-// with Drupal core.
-//
-//
-// @see https://www.drupal.org/node/1862446
-// @see http://docs.guzzlephp.org/en/latest
-// drupal_http_request($url, array('headers' => $headers));
-
+    $url_params = [
+      'query' => $base_params + [
+        'value' => $pid,
+      ],
+    ];
+    $url = Url::fromUri("http://$gsearch_user:$gsearch_password@$gsearch_endpoint", $url_params);
+    $client->request('GET', $url->toString());
   }
 }
