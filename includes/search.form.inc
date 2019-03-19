@@ -37,17 +37,14 @@ function islandora_collection_search_form(array $form, &$form_state) {
     // searching otherwise get its parent.
     $qp = new IslandoraSolrQueryProcessor();
     $qp->buildQuery('*:*');
-    // @FIXME
-// // @FIXME
-// // This looks like another module's variable. You'll need to rewrite this call
-// // to ensure that it uses the correct configuration object.
-// $qp->solrParams['fq'][] = format_string('!is_memberofcollection:"info:fedora/!pid" OR !is_member:"info:fedora/!pid"',
-//       array(
-//         '!is_memberofcollection' => variable_get('islandora_solr_member_of_collection_field', 'RELS_EXT_isMemberOfCollection_uri_ms'),
-//         '!is_memberof' => variable_get('islandora_solr_member_of_field', 'RELS_EXT_isMemberOf_uri_ms'),
-//         '!pid' => $collection,
-//       )
-//     );
+    $qp->solrParams['fq'][] = strtr(
+      '!is_memberofcollection:"info:fedora/!pid" OR !is_member:"info:fedora/!pid"',
+      [
+        '!is_memberofcollection' => \Drupal::config('islandora_solr.settings')->get('islandora_solr_member_of_collection_field'),
+        '!is_memberof' => \Drupal::config('islandora_solr.settings')->get('islandora_solr_member_of_field'),
+        '!pid' => $collection,
+      ]
+    );
 
     $qp->executeQuery(FALSE);
     // If no children need to find the immediate parent to search for instead.
