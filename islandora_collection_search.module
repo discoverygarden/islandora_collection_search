@@ -8,34 +8,6 @@
 use Drupal\Core\Form\FormStateInterface;
 
 /**
- * Implements hook_block_info().
- */
-function islandora_collection_search_block_info() {
-  $blocks['islandora_collection_search'] = array(
-    'info' => t('Islandora Collection Search'),
-    'cache' => DRUPAL_NO_CACHE,
-  );
-  return $blocks;
-}
-
-/**
- * Implements hook_block_view().
- */
-function islandora_collection_search_block_view($delta = '') {
-  $block = array();
-  switch ($delta) {
-    case 'islandora_collection_search':
-      if (\Drupal::currentUser()->hasPermission('search islandora solr')) {
-        module_load_include('inc', 'islandora_collection_search', 'includes/search.form');
-        $block['subject'] = t('Islandora Collection Search');
-        $block['content'] = \Drupal::formBuilder()->getForm('islandora_collection_search_form');
-      }
-      break;
-  }
-  return $block;
-}
-
-/**
  * Implements hook_islandora_solr_query().
  *
  * Adds a collection as a filter if it is defined in the url params.
