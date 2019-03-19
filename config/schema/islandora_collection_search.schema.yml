@@ -1,5 +1,5 @@
 islandora_collection_search.settings:
-  type: mapping
+  type: config_object
   label: Settings
   mapping:
     islandora_collection_search_gsearch_endpoint:
@@ -20,3 +20,5 @@ islandora_collection_search.settings:
       type: boolean
     islandora_collection_search_searchable_collections:
       type: sequence
+      sequence:
+        type: string
