@@ -4,6 +4,7 @@ namespace Drupal\islandora_collection_search\Form;
 
 use Drupal\Core\Form\FormBase;
 use Drupal\Core\Form\FormStateInterface;
+use Drupal\Core\Url;
 
 /**
  * Form for searching within a given collection (or site wide).
@@ -62,7 +63,7 @@ class Search extends FormBase {
       }
       $show_label = $this->config('islandora_collection_search.settings')->get('islandora_collection_search_display_label');
       if (!empty($collections)) {
-        // If there are more than one possible parents we can't differentiate for
+        // If there is more than one possible parents we can't differentiate for
         // the "This collection" case, resort to using the labels.
         if (count($collections) > 1) {
           foreach ($collections as $object) {
@@ -91,7 +92,7 @@ class Search extends FormBase {
     }
     $default_search_value = '';
     // Check if we're on a search results page.
-    if ($this->config('islandora_collection_search.settings')->get('islandora_collection_search_retain_search_values') && strpos(\Drupal\Core\Url::fromRoute("<current>")->toString(), 'islandora/search') === 0) {
+    if ($this->config('islandora_collection_search.settings')->get('islandora_collection_search_retain_search_values') && strpos(Url::fromRoute('<current>')->toString(), 'islandora/search') === 0) {
       if (isset($_GET['cp'])) {
         $default_search = $_GET['cp'];
       }

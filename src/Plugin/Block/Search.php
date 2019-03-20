@@ -7,6 +7,7 @@ use Drupal\Core\Access\AccessResult;
 use Drupal\Core\Session\AccountInterface;
 
 /**
+ * Block for searching collections.
  *
  * @Block(
  *   id = "islandora_collection_search",

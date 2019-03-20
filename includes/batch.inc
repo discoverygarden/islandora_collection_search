@@ -6,7 +6,6 @@
  */
 
 use Drupal\Core\Url;
-use GuzzleHttp\Exception\GuzzleException;
 
 /**
  * Recursively constructs a list of descendants for the given pid.
@@ -154,9 +153,6 @@ function islandora_collection_search_reindex_object($pids) {
   $base_params = [
     'operation' => 'updateIndex',
     'action' => 'fromPid',
-  ];
-  $headers = [
-    'Authorization' => 'Basic: ' . base64_encode(rawurlencode($gsearch_user) . ':' . rawurlencode($gsearch_password)),
   ];
 
   $client = \Drupal::httpClient();
