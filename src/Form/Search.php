@@ -124,7 +124,6 @@ class Search extends FormBase {
    * {@inheritdoc}
    */
   public function submitForm(array &$form, FormStateInterface $form_state) {
-    $form_state->setRebuild();
     $search_string = $form_state->getValue('islandora_simple_search_query');
     // Replace the slash so URL doesn't break.
     $search_string = islandora_solr_replace_slashes($search_string);

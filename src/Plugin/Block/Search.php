@@ -20,7 +20,7 @@ class Search extends AbstractFormBlockBase {
    * {@inheritdoc}
    */
   public function build() {
-    return \Drupal::formBuilder()->getForm('islandora_collection_search_form');
+    return \Drupal::formBuilder()->getForm('\Drupal\islandora_collection_search\Form\Search');
   }
 
   /**
