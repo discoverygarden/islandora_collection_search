@@ -5,7 +5,9 @@ namespace Drupal\islandora_collection_search\Form;
 use Drupal\Core\Form\FormBase;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Url;
+use Drupal\Core\Cache\CacheableMetadata;
 
+use Drupal\islandora\Controller\DefaultController as IslandoraController;
 use Drupal\islandora_solr\IslandoraSolrQueryProcessor;
 
 /**
@@ -27,6 +29,10 @@ class Search extends FormBase {
     $form_state->loadInclude('islandora_collection_search', 'inc', 'includes/search.form');
     $form_state->loadInclude('islandora_collection_search', 'inc', 'includes/utilities');
 
+    $cache = CacheableMetadata::createFromRenderArray($form);
+    $cache->addCacheTags([IslandoraController::LISTING_TAG]);
+    $cache->addCacheableDependency($this->config('islandora_collection_search.settings'));
+
     $form['simple'] = [
       '#type' => 'container',
       '#attributes' => [
@@ -42,9 +48,11 @@ class Search extends FormBase {
     ];
     $default_search = 'all';
     if ($collection) {
+      $cache->addCacheableDependency($this->config('islandora_solr.settings'));
       // See if the current object has children, and if so make it available for
       // searching otherwise get its parent.
       $qp = new IslandoraSolrQueryProcessor();
+      $cache->addCacheableDependency($qp);
       $qp->buildQuery('*:*');
       $qp->solrParams['fq'][] = strtr(
         '!is_memberofcollection:"info:fedora/!pid" OR !is_member:"info:fedora/!pid"',
@@ -119,6 +127,7 @@ class Search extends FormBase {
       '#type' => 'submit',
       '#value' => $this->t('search'),
     ];
+    $cache->applyTo($form);
     return $form;
   }
 
