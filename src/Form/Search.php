@@ -6,6 +6,8 @@ use Drupal\Core\Form\FormBase;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Url;
 
+use Drupal\islandora_solr\IslandoraSolrQueryProcessor;
+
 /**
  * Form for searching within a given collection (or site wide).
  */

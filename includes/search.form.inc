@@ -37,7 +37,7 @@ function islandora_collection_search_get_collection_pid() {
     return $pid;
   }
 
-  $test_object = \Drupal::routeMatch()->getParameter('islandora_object', 2);
+  $test_object = \Drupal::routeMatch()->getParameter('object');
   if ($test_object) {
     return $test_object->id;
   }
