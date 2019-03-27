@@ -5,6 +5,8 @@
  * Form helper.
  */
 
+use AbstractObject;
+
 /**
  * Break out acquisition of the collection pid.
  *
@@ -38,7 +40,7 @@ function islandora_collection_search_get_collection_pid() {
   }
 
   $test_object = \Drupal::routeMatch()->getParameter('object');
-  if ($test_object) {
+  if ($test_object instanceof AbstractObject) {
     return $test_object->id;
   }
 
