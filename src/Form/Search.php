@@ -48,7 +48,6 @@ class Search extends FormBase {
     ];
     $default_search = 'all';
     if ($collection) {
-      $cache->addCacheableDependency($this->config('islandora_solr.settings'));
       // See if the current object has children, and if so make it available for
       // searching otherwise get its parent.
       $qp = new IslandoraSolrQueryProcessor();
