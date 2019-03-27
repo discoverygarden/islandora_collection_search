@@ -14,12 +14,12 @@ use Drupal\Core\Form\FormStateInterface;
  */
 function islandora_collection_search_islandora_solr_query($islandora_solr_query) {
   // Exit early if the collection PID isn't set in the URL params.
-  if (!isset($_GET['cp'])) {
+  if (!isset(\Drupal::request()->query->all()['cp'])) {
     return;
   }
 
   // Grab the collection pid and add it as a Solr query filter.
-  $collection_pid = $_GET['cp'];
+  $collection_pid = \Drupal::request()->query->get('cp');
   $ancestor_field = \Drupal::config('islandora_collection_search.settings')->get('islandora_collection_search_ancestor_field');
   $filter = strtr('!field:"!value"', [
     '!field' => $ancestor_field,

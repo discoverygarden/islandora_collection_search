@@ -14,7 +14,7 @@ use AbstractObject;
  *   FALSE if it's not a collection, the PID otherwise.
  */
 function islandora_collection_search_get_collection_pid() {
-  $params = $_GET;
+  $params = \Drupal::request()->query->all();
   $hidden_filter = NULL;
   $rels_ext = [
     \Drupal::config('islandora_solr.settings')->get('islandora_solr_member_of_collection_field'),

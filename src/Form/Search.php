@@ -102,8 +102,9 @@ class Search extends FormBase {
     $default_search_value = '';
     // Check if we're on a search results page.
     if ($this->config('islandora_collection_search.settings')->get('islandora_collection_search_retain_search_values') && strpos(Url::fromRoute('<current>')->toString(), 'islandora/search') === 0) {
-      if (isset($_GET['cp'])) {
-        $default_search = $_GET['cp'];
+      $request_params = $this->getRequest()->query->all();
+      if (isset($request_params['cp'])) {
+        $default_search = $request_params['cp'];
       }
       $default_search_value = arg(2);
     }
