@@ -5,8 +5,6 @@
  * Form helper.
  */
 
-use AbstractObject;
-
 /**
  * Break out acquisition of the collection pid.
  *
