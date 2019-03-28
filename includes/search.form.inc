@@ -12,7 +12,7 @@
  *   FALSE if it's not a collection, the PID otherwise.
  */
 function islandora_collection_search_get_collection_pid() {
-  $params = \Drupal::request()->query->all();
+  $query = \Drupal::request()->query;
   $hidden_filter = NULL;
   $rels_ext = [
     \Drupal::config('islandora_solr.settings')->get('islandora_solr_member_of_collection_field'),
@@ -20,8 +20,8 @@ function islandora_collection_search_get_collection_pid() {
   ];
 
   // Find rels ext in parameters.
-  if (isset($params['f'])) {
-    foreach ($params['f'] as $filter) {
+  if ($query->has('f')) {
+    foreach ($query->get('f') as $filter) {
       $filter_arr = explode(':', $filter);
       foreach ($rels_ext as $rels) {
         if (strpos($filter_arr[0], $rels) === 0) {
