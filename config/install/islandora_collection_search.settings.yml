@@ -1,4 +1,4 @@
-islandora_collection_search_gsearch_endpoint: 'http://localhost:8080/fedoragsearch/rest'
+islandora_collection_search_gsearch_endpoint: 'localhost:8080/fedoragsearch/rest'
 islandora_collection_search_gsearch_user: fedoraAdmin
 islandora_collection_search_gsearch_password: fedoraAdmin
 islandora_collection_search_ancestor_field: ancestors_ms
