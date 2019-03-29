@@ -5,9 +5,10 @@
  * Batch operation implementation.
  */
 
+use Drupal\Core\Url;
+
 /**
  * Recursively constructs a list of descendants for the given pid.
- *
  *
  * @param string $pid
  *   The pid whose descendants we wish to obtain.
@@ -17,7 +18,7 @@
  *   If this breaks memory constraints, we could make this write to a file...
  *   Might then have to contend with time constraints?
  */
-function islandora_collection_search_get_descendants($pid, &$out_array) {
+function islandora_collection_search_get_descendants($pid, array &$out_array) {
   // SPARQL query to get all children for a given pid.
   $query = "PREFIX fre: <info:fedora/fedora-system:def/relations-external#>
             PREFIX fm: <info:fedora/fedora-system:def/model#>
@@ -56,17 +57,17 @@ function islandora_collection_search_get_descendants($pid, &$out_array) {
  * A batch description which should reindex the children of $moving.
  */
 function islandora_collection_search_reindex_descendants_batch($moving) {
-  return array(
-    'operations' => array(
-      array('islandora_collection_search_get_descendants_batch_operation', array($moving)),
-      array('islandora_collection_search_reindex_descendants_batch_operation', array()),
-    ),
+  return [
+    'operations' => [
+      ['islandora_collection_search_get_descendants_batch_operation', [$moving]],
+      ['islandora_collection_search_reindex_descendants_batch_operation', []],
+    ],
     'title' => t('Reindexing children...'),
     'init_message' => t('Preparing to reindex children...'),
     'progress_message' => t('Time elapsed: @elapsed <br/>Estimated time remaning @estimate.'),
     'error_message' => t('An error has occurred.'),
     'file' => drupal_get_path('module', 'islandora_collection_search') . '/includes/batch.inc',
-  );
+  ];
 }
 
 /**
@@ -79,14 +80,14 @@ function islandora_collection_search_reindex_descendants_batch($moving) {
  *   We will place the objects discovered into
  *   $context['results']['to_reindex'].
  */
-function islandora_collection_search_get_descendants_batch_operation($moving, &$context) {
+function islandora_collection_search_get_descendants_batch_operation(array $moving, array &$context) {
   $sandbox = &$context['sandbox'];
 
   if (!isset($sandbox['offset'])) {
     // Initialize operation state.
     $sandbox['offset'] = 0;
     $sandbox['total'] = count($moving);
-    $context['results']['to_reindex'] = array();
+    $context['results']['to_reindex'] = [];
     if ($sandbox['total'] === 0) {
       return;
     }
@@ -98,15 +99,15 @@ function islandora_collection_search_get_descendants_batch_operation($moving, &$
   islandora_collection_search_get_descendants($pid, $context['results']['to_reindex']);
 
   $context['finished'] = $sandbox['offset'] / $sandbox['total'];
-  $context['message'] = t('Discovered descendants of @pid.', array(
+  $context['message'] = t('Discovered descendants of @pid.', [
     '@pid' => $pid,
-  ));
+  ]);
 }
 
 /**
  * A batch operation to reindex objects.
  *
- * @param array $context
+ * @param mixed $context
  *   We expect there to be an array of PIDs to reindex in
  *   $context['results']['to_reindex'].
  */
@@ -131,9 +132,9 @@ function islandora_collection_search_reindex_descendants_batch_operation(&$conte
   islandora_collection_search_reindex_object($pid);
 
   $context['finished'] = $sandbox['offset'] / $sandbox['total'];
-  $context['message'] = t('Reindexed @pid.', array(
+  $context['message'] = t('Reindexed @pid.', [
     '@pid' => $pid,
-  ));
+  ]);
 }
 
 /**
@@ -145,26 +146,24 @@ function islandora_collection_search_reindex_descendants_batch_operation(&$conte
  */
 function islandora_collection_search_reindex_object($pids) {
   // Construct the url to ping gsearch to perform the re-index.
-  $gsearch_endpoint = variable_get("islandora_collection_search_gsearch_endpoint", "http://localhost:8080/fedoragsearch/rest");
-  $gsearch_user = variable_get("islandora_collection_search_gsearch_user", "fedoraAdmin");
-  $gsearch_password = variable_get("islandora_collection_search_gsearch_password", "fedoraAdmin");
+  $gsearch_endpoint = \Drupal::config('islandora_collection_search.settings')->get("islandora_collection_search_gsearch_endpoint");
+  $gsearch_user = \Drupal::config('islandora_collection_search.settings')->get("islandora_collection_search_gsearch_user");
+  $gsearch_password = \Drupal::config('islandora_collection_search.settings')->get("islandora_collection_search_gsearch_password");
 
-  $base_params = array(
+  $base_params = [
     'operation' => 'updateIndex',
     'action' => 'fromPid',
-  );
-  $headers = array(
-    'Authorization' => 'Basic: ' . base64_encode(rawurlencode($gsearch_user) . ':' . rawurlencode($gsearch_password)),
-  );
+  ];
 
+  $client = \Drupal::httpClient();
   foreach ((array) $pids as $pid) {
     // Poke gsearch with each pid.
-    $url = url($gsearch_endpoint, array(
-      'query' => $base_params + array(
+    $url_params = [
+      'query' => $base_params + [
         'value' => $pid,
-      ),
-    ));
-
-    drupal_http_request($url, array('headers' => $headers));
+      ],
+    ];
+    $url = Url::fromUri("http://$gsearch_user:$gsearch_password@$gsearch_endpoint", $url_params);
+    $client->request('GET', $url->toString());
   }
 }

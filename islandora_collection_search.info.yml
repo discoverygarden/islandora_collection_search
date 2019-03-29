@@ -1,0 +1,10 @@
+name: 'Islandora Collection Search'
+description: 'Module for searching within a specific collection in Islandora'
+package: Islandora
+core: 8.x
+dependencies:
+  islandora: ':islandora'
+  islandora_solr: ':islandora_solr'
+  islandora_basic_collection: ':islandora_basic_collection'
+type: module
+php: '5.5.9'

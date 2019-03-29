@@ -1,0 +1,9 @@
+islandora_collection_search_gsearch_endpoint: 'http://localhost:8080/fedoragsearch/rest'
+islandora_collection_search_gsearch_user: fedoraAdmin
+islandora_collection_search_gsearch_password: fedoraAdmin
+islandora_collection_search_ancestor_field: ancestors_ms
+islandora_collection_search_all_pages: false
+islandora_collection_search_display_label: false
+islandora_collection_search_advanced_search_alter: false
+islandora_collection_search_retain_search_values: false
+islandora_collection_search_searchable_collections: []

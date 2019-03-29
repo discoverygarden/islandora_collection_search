@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @file
  * Utility functions for the collection search module.
@@ -17,8 +18,8 @@
  *   An associative array where the key is the pid of the collection object
  *   and the value is the label.
  */
-function islandora_collection_search_retrieve_searchable_collections($options, $collection = FALSE) {
-  $searchable_collections = variable_get('islandora_collection_search_searchable_collections', array());
+function islandora_collection_search_retrieve_searchable_collections(array $options, $collection = FALSE) {
+  $searchable_collections = \Drupal::config('islandora_collection_search.settings')->get('islandora_collection_search_searchable_collections');
   $searchable_collections = array_filter($searchable_collections);
   foreach ($searchable_collections as $collection_pid) {
     // Don't want to add the current collection twice or inaccessible
