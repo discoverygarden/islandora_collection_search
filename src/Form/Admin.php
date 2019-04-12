@@ -5,10 +5,14 @@ namespace Drupal\islandora_collection_search\Form;
 use Drupal\Core\Form\ConfigFormBase;
 use Drupal\Core\Form\FormStateInterface;
 
+use Drupal\islandora\Utility\StateTrait;
+
 /**
  * Admin form and submission handler.
  */
 class Admin extends ConfigFormBase {
+
+  use StateTrait;
 
   /**
    * {@inheritdoc}
@@ -131,20 +135,32 @@ class Admin extends ConfigFormBase {
    * {@inheritdoc}
    */
   public function submitForm(array &$form, FormStateInterface $form_state) {
+    static::stateSet('islandora_collection_search_gsearch_endpoint', $form_state->getValue(['islandora_collection_search_gsearch_endpoint']));
+    static::stateSet('islandora_collection_search_gsearch_user', $form_state->getValue(['islandora_collection_search_gsearch_user']));
+    if ($form_state->getValue(['islandora_collection_search_gsearch_password']) || $form_state->getValue(['blank_password'])) {
+      static::stateSet('islandora_collection_search_gsearch_password', $form_state->getValue(['islandora_collection_search_gsearch_password']));
+    }
+
     $config = $this->config('islandora_collection_search.settings');
     $config->set('islandora_collection_search_ancestor_field', $form_state->getValue(['ancestor_field']));
-    $config->set('islandora_collection_search_gsearch_endpoint', $form_state->getValue(['islandora_collection_search_gsearch_endpoint']));
-    $config->set('islandora_collection_search_gsearch_user', $form_state->getValue(['islandora_collection_search_gsearch_user']));
     $config->set('islandora_collection_search_display_label', $form_state->getValue(['collection_label']));
-    if ($form_state->getValue(['islandora_collection_search_gsearch_password']) || $form_state->getValue(['blank_password'])) {
-      $config->set('islandora_collection_search_gsearch_password', $form_state->getValue(['islandora_collection_search_gsearch_password']));
-    }
     $config->set('islandora_collection_search_all_pages', $form_state->getValue(['all_pages']));
     $config->set('islandora_collection_search_searchable_collections', $form_state->getValue(['collection_selection']));
     $config->set('islandora_collection_search_advanced_search_alter', $form_state->getValue(['advanced_search_alter']));
     $config->set('islandora_collection_search_retain_search_values', $form_state->getValue(['retain_values_on_search_results']));
 
     $config->save();
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public static function stateDefaults() {
+    return [
+      'islandora_collection_search_gsearch_endpoint' => 'localhost:8080/fedoragsearch/rest',
+      'islandora_collection_search_gsearch_user' => 'fedoraAdmin',
+      'islandora_collection_search_gsearch_password' => 'fedoraAdmin',
+    ];
   }
 
 }
