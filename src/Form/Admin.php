@@ -48,18 +48,18 @@ class Admin extends ConfigFormBase {
         '#title' => $this->t('GSearch Endpoint'),
         '#type' => 'textfield',
         '#required' => TRUE,
-        '#default_value' => $config->get("islandora_collection_search_gsearch_endpoint"),
+        '#default_value' => static::stateGet("islandora_collection_search_gsearch_endpoint"),
       ],
       'islandora_collection_search_gsearch_user' => [
         '#title' => $this->t('GSearch User'),
         '#type' => 'textfield',
         '#required' => TRUE,
-        '#default_value' => $config->get("islandora_collection_search_gsearch_user"),
+        '#default_value' => static::stateGet("islandora_collection_search_gsearch_user"),
       ],
       'islandora_collection_search_gsearch_password' => [
         '#title' => $this->t('GSearch Password'),
         '#type' => 'password',
-        '#default_value' => $config->get("islandora_collection_search_gsearch_password"),
+        '#default_value' => static::stateGet("islandora_collection_search_gsearch_password"),
       ],
       'blank_password' => [
         '#type' => 'checkbox',

@@ -7,6 +7,8 @@
 
 use Drupal\Core\Url;
 
+use Drupal\islandora_collection_search\Form\Admin as AdminForm;
+
 /**
  * Recursively constructs a list of descendants for the given pid.
  *
@@ -146,9 +148,9 @@ function islandora_collection_search_reindex_descendants_batch_operation(&$conte
  */
 function islandora_collection_search_reindex_object($pids) {
   // Construct the url to ping gsearch to perform the re-index.
-  $gsearch_endpoint = \Drupal::config('islandora_collection_search.settings')->get("islandora_collection_search_gsearch_endpoint");
-  $gsearch_user = \Drupal::config('islandora_collection_search.settings')->get("islandora_collection_search_gsearch_user");
-  $gsearch_password = \Drupal::config('islandora_collection_search.settings')->get("islandora_collection_search_gsearch_password");
+  $gsearch_endpoint = AdminForm::stateGet("islandora_collection_search_gsearch_endpoint");
+  $gsearch_user = AdminForm::stateGet("islandora_collection_search_gsearch_user");
+  $gsearch_password = AdminForm::stateGet("islandora_collection_search_gsearch_password");
 
   $base_params = [
     'operation' => 'updateIndex',
