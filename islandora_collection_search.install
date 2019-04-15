@@ -1,0 +1,15 @@
+<?php
+
+/**
+ * @file
+ * Module (un)installation hooks.
+ */
+
+use Drupal\islandora_collection_search\Form\Admin;
+
+/**
+ * Implements hook_uninstall().
+ */
+function islandora_collection_search_uninstall() {
+  Admin::stateDeleteAll();
+}
