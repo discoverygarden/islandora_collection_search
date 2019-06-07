@@ -106,27 +106,14 @@ function islandora_collection_search_help($route) {
     case 'help.page.islandora_collection_search':
       // About section.
       $output = '<h3>' . t('About') . '</h3>';
-      $output .= '<p>' . t(
-        'The Islandora Collection Search module provides a Block similar to
-        the "Simple Search" Block provided by Islandora Solr. When this Block
-        is set to search all collections, it functions exactly like the "Simple
-        Seach" Block; the key difference for the "Islandora Collection Search"
-        Block is referenced in its name: it allows users to limit searches to
-        a specific collection. The Collections available to be searched depend
-        on the configuration on your website. Configuration details can be
-        found on the module\'s <a href=":readme">README</a>.', [
-          ':readme' => 'https://github.com/discoverygarden/islandora_collection_search/blob/8.x/README.md',
-        ]
-      ) .
+      $output .= '<p>' . t('The Islandora Collection Search module provides a Block similar to the "Simple Search" Block provided by Islandora Solr. When this Block is set to search all collections, it functions exactly like the "Simple Seach" Block; the key difference for the "Islandora Collection Search" Block is referenced in its name: it allows users to limit searches to a specific collection. The Collections available to be searched depend on the configuration on your website. Configuration details can be found on the module\'s <a href=":readme">README</a>.', [
+        ':readme' => 'https://github.com/discoverygarden/islandora_collection_search/blob/8.x/README.md',
+      ]) .
       '</p>';
       // Uses section.
       $output .= '<h3>' . t('Uses') . '</h3>';
-      $output .= '<dt>' . t('Searching') . '</dt><dd>' . t(
-        'As long as the "Islandora Collection Search" Block is configured
-        correctly, things should not be too complicated. Select the desired
-        collection to search from the drop-down, and type your keywords in
-        the search field.'
-      ) .
+      $output .= '<dt>' . t('Searching') . '</dt><dd>';
+      $output .= t('As long as the "Islandora Collection Search" Block is configured correctly, things should not be too complicated. Select the desired collection to search from the drop-down, and type your keywords in the search field.') .
       '</dd>';
       return $output;
 
