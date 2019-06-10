@@ -109,13 +109,13 @@ class Admin extends ConfigFormBase {
     $form['collections']['all_pages'] = [
       '#type' => 'checkbox',
       '#title' => $this->t('Display collection selection on all pages?'),
-      '#description' => $this->t("When selected this will display the collection selection box on all pages with the previously selected collection options"),
+      '#description' => $this->t("When selected this will display the collection selection box on all pages with the previously selected collection options."),
       '#default_value' => $config->get('islandora_collection_search_all_pages'),
     ];
     $form['collections']['collection_label'] = [
       '#type' => 'checkbox',
       '#title' => $this->t('Display collection label?'),
-      '#description' => $this->t("When selected this will display the current collection's label for display as opposed to this collection"),
+      '#description' => $this->t("When selected this will display the current collection's label for display as opposed to this collection."),
       '#default_value' => $config->get('islandora_collection_search_display_label'),
     ];
     $form['collections']['advanced_search_alter'] = [
