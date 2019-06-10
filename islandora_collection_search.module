@@ -116,7 +116,5 @@ function islandora_collection_search_help($route) {
       $output .= t('As long as the "Islandora Collection Search" Block is configured correctly, things should not be too complicated. Select the desired collection to search from the drop-down, and type your keywords in the search field.') .
       '</dd>';
       return $output;
-
-    // Other cases can be added for various admin pages.
   }
 }
