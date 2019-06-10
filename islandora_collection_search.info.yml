@@ -1,5 +1,5 @@
 name: 'Islandora Collection Search'
-description: 'Module for searching within a specific collection in Islandora'
+description: 'Module for searching within a specific collection in Islandora.'
 package: Islandora
 core: 8.x
 dependencies:
