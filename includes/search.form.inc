@@ -37,7 +37,7 @@ function islandora_collection_search_form($form, &$form_state) {
     // searching otherwise get its parent.
     $qp = new IslandoraSolrQueryProcessor();
     $qp->buildQuery('*:*');
-    $qp->solrParams['fq'][] = format_string('!is_memberofcollection:"info:fedora/!pid" OR !is_member:"info:fedora/!pid"',
+    $qp->solrParams['fq'][] = format_string('!is_memberofcollection:"info:fedora/!pid" OR !is_memberof:"info:fedora/!pid"',
       array(
         '!is_memberofcollection' => variable_get('islandora_solr_member_of_collection_field', 'RELS_EXT_isMemberOfCollection_uri_ms'),
         '!is_memberof' => variable_get('islandora_solr_member_of_field', 'RELS_EXT_isMemberOf_uri_ms'),
@@ -163,7 +163,7 @@ function islandora_collection_search_get_collection_pid() {
     }
   }
   $hidden_match = array();
-  if (preg_match('@.*:"(?:info\\\:fedora\\\/)?(.*)"@', $hidden_filter, $hidden_match)) {
+  if (preg_match('@info\:fedora\/(.*)"@', $hidden_filter, $hidden_match)) {
     $pid = str_replace('\\', '', $hidden_match[1]);
     return $pid;
   }
